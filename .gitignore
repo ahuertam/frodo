@@ -1,0 +1,15 @@
+# Python standard ignores
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Generated Content (Narrator/Salomon)
+*.mp3
+*.txt
+
+# Exceptions for Tests and Demos
+!*_Test*
+!*_demo*
+!cuento_corto.txt
