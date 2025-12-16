@@ -1,0 +1,27 @@
+# Environment files
+.env.local
+.env
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Uploads and generated files
+uploads/*
+!uploads/.gitkeep
+static/generated/*
+!static/generated/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

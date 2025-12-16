@@ -1,0 +1,6 @@
+flask
+pillow
+requests
+huggingface-hub
+openai
+python-dotenv

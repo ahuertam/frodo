@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delineante - Agente Isométrico</title>
+    <style>
+        :root {
+            --bg: #fdf6e3;
+            /* Solarized Light background */
+            --grid: #e0dcc7;
+            --text: #657b83;
+            --accent: #268bd2;
+            --border: #93a1a1;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            /* Patrón de papel milimetrado */
+            background-image:
+                linear-gradient(var(--grid) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        h1 {
+            border: 2px solid var(--text);
+            padding: 10px 20px;
+            margin-top: 30px;
+            background: white;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .container {
+            display: flex;
+            gap: 40px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .panel {
+            background: white;
+            border: 2px solid var(--border);
+            padding: 20px;
+            width: 400px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.1);
+        }
+
+        .panel h2 {
+            margin-top: 0;
+            border-bottom: 2px dashed var(--border);
+            width: 100%;
+            text-align: center;
+            padding-bottom: 10px;
+        }
+
+        #drop-zone {
+            width: 100%;
+            height: 300px;
+            border: 2px dashed var(--accent);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #drop-zone:hover {
+            background: #eee8d5;
+        }
+
+        #drop-zone img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        #result-zone {
+            width: 100%;
+            height: 300px;
+            border: 2px solid var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #eee;
+            position: relative;
+        }
+
+        #result-zone img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 15px 40px;
+            font-family: inherit;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: var(--accent);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 4px 4px 0px var(--text);
+            transition: transform 0.1s;
+        }
+
+        button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px var(--text);
+        }
+
+        button:disabled {
+            background: var(--border);
+            cursor: not-allowed;
+        }
+
+        .spinner {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hidden-input {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Delineante v1.0</h1>
+
+    <div class="container">
+        <!-- Input Panel -->
+        <div class="panel">
+            <h2>INPUT (Referencia)</h2>
+            <div id="drop-zone" onclick="document.getElementById('file-input').click()">
+                <p id="placeholder-text">Arrastra imagen o Click aquí</p>
+                <img id="preview-img" src="" style="display:none;">
+            </div>
+            <input type="file" id="file-input" class="hidden-input" accept="image/*">
+        </div>
+
+        <!-- Output Panel -->
+        <div class="panel">
+            <h2>OUTPUT (Isométrico)</h2>
+            <div id="result-zone">
+                <span id="result-text" style="color:#999">Esperando...</span>
+                <div class="spinner" id="spinner"></div>
+                <img id="result-img" src="" style="display:none;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <button id="btn-generate" onclick="generate()" disabled>GENERAR PLANO</button>
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const previewImg = document.getElementById('preview-img');
+        const placeholderText = document.getElementById('placeholder-text');
+        const btnGenerate = document.getElementById('btn-generate');
+        const spinner = document.getElementById('spinner');
+        const resultImg = document.getElementById('result-img');
+        const resultText = document.getElementById('result-text');
+
+        let currentFile = null;
+
+        // Handle File Select
+        fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+
+        // Drag & Drop events
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.background = '#eee8d5'; });
+        dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.style.background = ''; });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.background = '';
+            handleFile(e.dataTransfer.files[0]);
+        });
+
+        function handleFile(file) {
+            if (file && file.type.startsWith('image/')) {
+                currentFile = file;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImg.src = e.target.result;
+                    previewImg.style.display = 'block';
+                    placeholderText.style.display = 'none';
+                    btnGenerate.disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function generate() {
+            if (!currentFile) return;
+
+            btnGenerate.disabled = true;
+            btnGenerate.innerText = "DIBUJANDO...";
+            resultImg.style.display = 'none';
+            resultText.style.display = 'none';
+            spinner.style.display = 'block';
+
+            const formData = new FormData();
+            formData.append('image', currentFile);
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultImg.src = data.result_url;
+                    resultImg.style.display = 'block';
+                    spinner.style.display = 'none';
+                    btnGenerate.innerText = "REGENERAR";
+                } else {
+                    alert('Error: ' + data.error);
+                    resultText.style.display = 'block';
+                    resultText.innerText = "Error";
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert('Error de conexión');
+            } finally {
+                btnGenerate.disabled = false;
+                spinner.style.display = 'none';
+                if (!resultImg.src) resultText.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+
+</html>
