@@ -8,6 +8,7 @@ venv/
 # Generated Content (Narrator/Salomon)
 *.mp3
 *.txt
+*.jpg
 
 # Exceptions for Tests and Demos
 !*_Test*
