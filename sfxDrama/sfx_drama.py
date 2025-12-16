@@ -12,22 +12,26 @@ import urllib.request
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SOUNDS_DIR = os.path.join(BASE_DIR, "sounds")
 MODEL_DIR = os.path.join(BASE_DIR, "model")
+SOUNDMAP_FILE = os.path.join(BASE_DIR, "soundmap.json")
 MODEL_URL = "https://alphacephei.com/vosk/models/vosk-model-small-es-0.42.zip"
 
-# Mapeo de Palabras Clave -> Sonidos
-# Asegúrate de que los archivos existan en sounds/
-KEYWORD_MAP = {
-    "aplauso": "applause.mp3",
-    "bravo": "applause.mp3",
-    "genial": "applause.mp3",
-    "miedo": "heartbeat.mp3",
-    "susto": "heartbeat.mp3",
-    "terror": "bone-crack.mp3",
-    "golpe": "bone-crack.mp3",
-    "bip": "beep.wav",
-    "sistema": "beep.wav",
-    "error": "beep.wav"
-}
+def load_soundmap():
+    """Carga el mapeo de sonidos desde JSON."""
+    if os.path.exists(SOUNDMAP_FILE):
+        try:
+            with open(SOUNDMAP_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"❌ Error leyendo soundmap.json: {e}")
+            return {}
+    else:
+        print("⚠️ soundmap.json no encontrado, creando uno por defecto.")
+        default_map = {"aplauso": "applause.mp3", "bip": "beep.wav"}
+        with open(SOUNDMAP_FILE, "w") as f:
+            json.dump(default_map, f, indent=4)
+        return default_map
+
+KEYWORD_MAP = load_soundmap()
 
 # Cola de audios para pasar del thread de audio al principal
 q = queue.Queue()

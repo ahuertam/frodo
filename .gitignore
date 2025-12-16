@@ -14,3 +14,4 @@ venv/
 !*_Test*
 !*_demo*
 !cuento_corto.txt
+!sfxDrama/sounds/**
