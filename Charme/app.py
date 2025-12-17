@@ -66,24 +66,60 @@ def analyze_image_with_gpt4_vision(image_path):
                     "content": [
                         {
                             "type": "text",
-                            "text": """Analyze ONLY the permanent facial features of the person in this image. IGNORE all clothing and accessories.
+                            "text": """Analyze the FACIAL FEATURES of this person with EXTREME DETAIL. Ignore all clothing and accessories.
 
-Describe ONLY:
-- Face shape (oval, round, square, angular, etc.)
-- Eye color and shape
-- Eyebrow style (thick, thin, arched, straight)
-- Nose shape (small, large, pointed, broad)
-- Mouth and lip shape
-- Facial hair (beard, mustache, clean-shaven)
-- Hair color and style (length, texture, color)
-- Skin tone
-- Age appearance (young, middle-aged, elderly)
-- Gender presentation
-- Overall facial expression or demeanor
+Provide a VERY DETAILED description of:
 
-DO NOT describe: clothing, accessories, modern items, background, or anything that is not a permanent facial feature.
+**FACE STRUCTURE:**
+- Exact face shape (oval, round, square, heart-shaped, diamond, rectangular)
+- Jawline (sharp, soft, prominent, receding)
+- Cheekbone prominence (high, low, defined, soft)
+- Forehead (broad, narrow, high, low)
 
-Be concise and focus only on features that would help recreate this person's face in a fantasy setting."""
+**EYES:**
+- Exact eye color (be specific: hazel, blue-green, dark brown, etc.)
+- Eye shape (almond, round, hooded, deep-set, wide-set)
+- Eye size relative to face
+- Eyelid characteristics
+
+**EYEBROWS:**
+- Thickness (thin, medium, thick, bushy)
+- Shape (arched, straight, angled)
+- Color
+
+**NOSE:**
+- Size (small, medium, large, prominent)
+- Bridge (straight, curved, wide, narrow)
+- Tip shape (pointed, rounded, bulbous)
+- Nostril size
+
+**MOUTH & LIPS:**
+- Lip fullness (thin, medium, full)
+- Mouth width (narrow, medium, wide)
+- Lip shape
+- Smile characteristics if visible
+
+**FACIAL HAIR:**
+- Type (clean-shaven, stubble, beard, mustache)
+- If present: style, length, coverage
+
+**HAIR:**
+- Color (be very specific)
+- Length
+- Texture (straight, wavy, curly, coily)
+- Style/cut
+- Hairline
+
+**SKIN:**
+- Skin tone (be specific)
+- Texture characteristics
+
+**AGE & EXPRESSION:**
+- Approximate age
+- Facial expression
+- Overall demeanor
+
+Be EXTREMELY DETAILED so the face can be accurately recreated. Focus on UNIQUE identifying features."""
                         },
                         {
                             "type": "image_url",
@@ -94,11 +130,11 @@ Be concise and focus only on features that would help recreate this person's fac
                     ]
                 }
             ],
-            max_tokens=250
+            max_tokens=400
         )
         
         description = response.choices[0].message.content
-        print(f"📝 Características faciales extraídas: {description[:80]}...")
+        print(f"📝 Características faciales detalladas extraídas ({len(description)} chars)")
         return description
     
     except Exception as e:
@@ -117,115 +153,137 @@ def analyze_image_free(image_path):
     
     return "a person"
 
-def generate_character_with_dalle3(description, character_class):
-    """Genera personaje RPG usando DALL-E 3 con prompts estructurados en capas"""
-    try:
-        class_info = next((c for c in CHARACTERS_DATA['classes'] if c['id'] == character_class), None)
-        if not class_info:
-            return None
-        
-        # Construir prompt en capas con negative prompts
-        prompt = f"""Professional fantasy RPG character portrait in {class_info.get('art_style', 'D&D style')}.
+def generate_character_with_dalle3(description, character_class, max_retries=3):
+    """Genera personaje RPG usando DALL-E 3 con máximo parecido facial y reintentos automáticos"""
+    class_info = next((c for c in CHARACTERS_DATA['classes'] if c['id'] == character_class), None)
+    if not class_info:
+        return None
+    
+    # Prompt optimizado para MÁXIMO parecido facial
+    prompt = f"""A fantasy RPG character portrait of a {class_info['name']}.
 
-=== FACIAL FEATURES (from reference) ===
+CRITICAL - PRESERVE THESE EXACT FACIAL FEATURES (HIGHEST PRIORITY):
 {description}
 
-=== CHARACTER CLASS ===
-{class_info['name']} - {class_info['description']}
+The face MUST look exactly like this description. This is the MOST IMPORTANT requirement. The facial likeness must be PERFECT and RECOGNIZABLE.
 
-=== REQUIRED VISUAL ELEMENTS ===
-{class_info.get('required_elements', class_info['keywords'])}
+Character clothing: {class_info.get('required_elements', class_info['keywords'])}
 
-=== VISUAL STYLE ===
-{class_info['keywords']}
+Art style: {class_info.get('art_style', 'D&D character art')}, professional fantasy portrait, {class_info['keywords']}
 
-=== STRICT REQUIREMENTS ===
-- Medieval fantasy setting ONLY
-- {class_info.get('art_style', 'High fantasy character art')}
-- Detailed fantasy armor/clothing appropriate for the class
-- Heroic pose with dramatic lighting
-- NO modern elements whatsoever
+STRICT RULES:
+1. PHOTOREALISTIC FACE - The face must be highly detailed and match the description EXACTLY
+2. Simple portrait, plain background
+3. NO decorative objects, NO floating items, NO UI elements
+4. NO text, NO letters, NO words, NO symbols
+5. Medieval fantasy clothing only, {class_info.get('forbidden_elements', 'no modern items')}
 
-=== ABSOLUTELY FORBIDDEN (DO NOT INCLUDE) ===
-{class_info.get('forbidden_elements', 'modern clothing, suits, ties, contemporary items')}
-
-Create a detailed character portrait that combines the facial features described with the fantasy class requirements. The character MUST be dressed in appropriate medieval/fantasy attire for their class, with zero modern elements."""
-
-        print(f"🎨 Generando {class_info['name']} con DALL-E 3 (prompts mejorados)...")
-        
-        response = openai_client.images.generate(
-            model="dall-e-3",
-            prompt=prompt,
-            size="1024x1024",
-            quality="standard",
-            n=1,
-        )
-        
-        image_url = response.data[0].url
-        
-        # Descargar la imagen
-        img_response = requests.get(image_url)
-        if img_response.status_code == 200:
-            return img_response.content
-        else:
-            return None
+Focus PRIMARILY on making the face look EXACTLY like the description. The facial features are MORE IMPORTANT than the clothing. Keep composition simple and clean."""
     
-    except Exception as e:
-        print(f"⚠️ Error en DALL-E 3: {e}")
-        return None
-
-def generate_character_with_pollinations(description, character_class):
-    """Genera personaje RPG con Pollinations.ai usando prompts estructurados"""
-    try:
-        class_info = next((c for c in CHARACTERS_DATA['classes'] if c['id'] == character_class), None)
-        if not class_info:
-            return None
+    # Intentar generar con reintentos
+    for attempt in range(max_retries):
+        try:
+            if attempt > 0:
+                print(f"🔄 Reintento {attempt + 1}/{max_retries} para {class_info['name']}...")
+            else:
+                print(f"🎨 Generando {class_info['name']} con DALL-E 3 (máximo parecido facial)...")
+            
+            response = openai_client.images.generate(
+                model="dall-e-3",
+                prompt=prompt,
+                size="1024x1024",
+                quality="standard",
+                n=1,
+            )
+            
+            image_url = response.data[0].url
+            
+            # Descargar la imagen
+            img_response = requests.get(image_url, timeout=60)
+            if img_response.status_code == 200:
+                print(f"✅ {class_info['name']} generado exitosamente")
+                return img_response.content
+            else:
+                print(f"⚠️ Error descargando imagen (intento {attempt + 1}/{max_retries})")
+                if attempt < max_retries - 1:
+                    time.sleep(2 ** attempt)  # Espera exponencial: 1s, 2s, 4s
+                    continue
         
-        # Prompt estructurado para Pollinations con negative prompts
-        final_prompt = f"""Professional {class_info.get('art_style', 'fantasy RPG')} character portrait.
-
-Facial features: {description}
-
-Character: {class_info['name']} - {class_info['description']}
-
-Required elements: {class_info.get('required_elements', class_info['keywords'])}
-
-Visual style: {class_info['keywords']}
-
-Art style: Epic fantasy character art, detailed digital painting, dramatic lighting, heroic pose, professional RPG illustration, {class_info.get('art_style', 'D&D aesthetic')}
-
-Medieval fantasy setting, detailed fantasy armor and equipment, NO modern clothing, NO suits, NO ties, NO contemporary items, NO modern accessories, pure fantasy aesthetic"""
-        
-        # Encode prompt for URL
-        encoded_prompt = requests.utils.quote(final_prompt)
-        
-        # Generar con Pollinations usando Flux
-        import random
-        seed = random.randint(0, 999999)
-        
-        params = {
-            'width': 1024,
-            'height': 1024,
-            'seed': seed,
-            'nologo': 'true',
-            'model': 'flux',
-            'enhance': 'true'
-        }
-        
-        param_string = '&'.join([f"{k}={v}" for k, v in params.items()])
-        image_url = f"{POLLINATIONS_URL}{encoded_prompt}?{param_string}"
-        
-        print(f"🎨 Generando {class_info['name']} con Pollinations (prompts mejorados)...")
-        
-        response = requests.get(image_url, timeout=90)
-        if response.status_code == 200:
-            return response.content
-        else:
-            return None
+        except Exception as e:
+            print(f"⚠️ Error en DALL-E 3 (intento {attempt + 1}/{max_retries}): {e}")
+            if attempt < max_retries - 1:
+                time.sleep(2 ** attempt)  # Espera exponencial
+                continue
     
-    except Exception as e:
-        print(f"⚠️ Error en Pollinations: {e}")
+    print(f"❌ No se pudo generar {class_info['name']} después de {max_retries} intentos")
+    return None
+
+def generate_character_with_pollinations(description, character_class, max_retries=3):
+    """Genera personaje RPG con Pollinations.ai con máximo parecido facial y reintentos automáticos"""
+    class_info = next((c for c in CHARACTERS_DATA['classes'] if c['id'] == character_class), None)
+    if not class_info:
         return None
+    
+    # Prompt optimizado para máximo parecido
+    final_prompt = f"""Fantasy RPG character portrait of a {class_info['name']}.
+
+CRITICAL - EXACT FACIAL FEATURES (HIGHEST PRIORITY): {description}
+
+The face must look EXACTLY like this description. Photorealistic facial features. Perfect facial likeness.
+
+Clothing: {class_info.get('required_elements', class_info['keywords'])}
+
+Style: {class_info.get('art_style', 'D&D character art')}, professional fantasy portrait
+
+IMPORTANT: Photorealistic face matching description EXACTLY, simple portrait, plain background, NO decorative objects, NO text, NO UI elements. Medieval fantasy only, no modern items.
+
+Focus on perfect facial likeness first, then {class_info['name']} attire."""
+    
+    # Encode prompt for URL
+    encoded_prompt = requests.utils.quote(final_prompt)
+    
+    # Intentar generar con reintentos
+    for attempt in range(max_retries):
+        try:
+            if attempt > 0:
+                print(f"🔄 Reintento {attempt + 1}/{max_retries} para {class_info['name']}...")
+            else:
+                print(f"🎨 Generando {class_info['name']} con Pollinations (máximo parecido facial)...")
+            
+            # Generar con Pollinations usando Flux
+            import random
+            seed = random.randint(0, 999999)
+            
+            params = {
+                'width': 1024,
+                'height': 1024,
+                'seed': seed,
+                'nologo': 'true',
+                'model': 'flux',
+                'enhance': 'true'
+            }
+            
+            param_string = '&'.join([f"{k}={v}" for k, v in params.items()])
+            image_url = f"{POLLINATIONS_URL}{encoded_prompt}?{param_string}"
+            
+            response = requests.get(image_url, timeout=90)
+            if response.status_code == 200:
+                print(f"✅ {class_info['name']} generado exitosamente")
+                return response.content
+            else:
+                print(f"⚠️ Error en Pollinations (intento {attempt + 1}/{max_retries}): Status {response.status_code}")
+                if attempt < max_retries - 1:
+                    time.sleep(2 ** attempt)  # Espera exponencial
+                    continue
+        
+        except Exception as e:
+            print(f"⚠️ Error en Pollinations (intento {attempt + 1}/{max_retries}): {e}")
+            if attempt < max_retries - 1:
+                time.sleep(2 ** attempt)  # Espera exponencial
+                continue
+    
+    print(f"❌ No se pudo generar {class_info['name']} después de {max_retries} intentos")
+    return None
 
 @app.route('/')
 def index():
