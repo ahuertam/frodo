@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charme - Transformador de Personajes RPG</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🎭 Charme</h1>
+            <p class="subtitle">Transforma fotos en personajes de rol épicos</p>
+            <div class="mode-badge {{ mode }}">
+                {{ '🔑 Modo Premium' if mode == 'premium' else '🆓 Modo Gratuito' }}
+            </div>
+        </header>
+
+        <main>
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="imageInput" accept="image/*" hidden>
+                    <div class="upload-content">
+                        <div class="upload-icon">📸</div>
+                        <h3>Sube una foto</h3>
+                        <p>Arrastra una imagen o haz clic para seleccionar</p>
+                        <button class="btn-primary" onclick="document.getElementById('imageInput').click()">
+                            Seleccionar Imagen
+                        </button>
+                    </div>
+                    <img id="previewImage" class="preview-image" style="display: none;">
+                </div>
+
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="characterClass">
+                            <span class="label-icon">⚔️</span>
+                            Clase de Personaje
+                        </label>
+                        <select id="characterClass" class="select-input">
+                            {% for char in characters %}
+                            <option value="{{ char.id }}">{{ char.name }} - {{ char.description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="characterCount">
+                            <span class="label-icon">🎲</span>
+                            Cantidad de Personajes
+                        </label>
+                        <div class="count-selector">
+                            <button class="count-btn" onclick="changeCount(-1)">-</button>
+                            <input type="number" id="characterCount" min="1" max="4" value="1" readonly>
+                            <button class="count-btn" onclick="changeCount(1)">+</button>
+                        </div>
+                    </div>
+
+                    <button id="generateBtn" class="btn-generate" disabled>
+                        <span class="btn-text">Generar Personajes</span>
+                        <span class="btn-icon">✨</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="loadingSection" class="loading-section" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Transformando en personaje épico...</p>
+                <p class="loading-subtext" id="loadingProgress"></p>
+            </div>
+
+            <div id="resultsSection" class="results-section" style="display: none;">
+                <h2>🎨 Personajes Generados</h2>
+                <div class="results-info">
+                    <p><strong>Clase:</strong> <span id="resultClass"></span></p>
+                    <p><strong>Descripción original:</strong> <span id="resultDescription"></span></p>
+                </div>
+                <div id="resultsGrid" class="results-grid"></div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Powered by {{ 'OpenAI DALL-E 3' if mode == 'premium' else 'Pollinations.ai' }} 🚀</p>
+        </footer>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const imageInput = document.getElementById('imageInput');
+        const previewImage = document.getElementById('previewImage');
+        const uploadContent = document.querySelector('.upload-content');
+        const generateBtn = document.getElementById('generateBtn');
+        const loadingSection = document.getElementById('loadingSection');
+        const resultsSection = document.getElementById('resultsSection');
+        const loadingProgress = document.getElementById('loadingProgress');
+
+        let selectedFile = null;
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        imageInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Por favor selecciona una imagen válida');
+                return;
+            }
+
+            selectedFile = file;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                previewImage.style.display = 'block';
+                uploadContent.style.display = 'none';
+                generateBtn.disabled = false;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function changeCount(delta) {
+            const input = document.getElementById('characterCount');
+            let value = parseInt(input.value) + delta;
+            value = Math.max(1, Math.min(4, value));
+            input.value = value;
+        }
+
+        generateBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+
+            const formData = new FormData();
+            formData.append('image', selectedFile);
+            formData.append('character_class', document.getElementById('characterClass').value);
+            formData.append('character_count', document.getElementById('characterCount').value);
+
+            // Show loading
+            resultsSection.style.display = 'none';
+            loadingSection.style.display = 'block';
+            generateBtn.disabled = true;
+
+            const count = parseInt(document.getElementById('characterCount').value);
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 1;
+                loadingProgress.textContent = `Generando personaje ${Math.min(progress, count)} de ${count}...`;
+            }, 3000);
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                clearInterval(progressInterval);
+
+                if (!response.ok) {
+                    throw new Error('Error al generar personajes');
+                }
+
+                const data = await response.json();
+                displayResults(data);
+            } catch (error) {
+                clearInterval(progressInterval);
+                alert('Error: ' + error.message);
+                loadingSection.style.display = 'none';
+                generateBtn.disabled = false;
+            }
+        });
+
+        function displayResults(data) {
+            loadingSection.style.display = 'none';
+            resultsSection.style.display = 'block';
+
+            document.getElementById('resultClass').textContent = data.class_name;
+            document.getElementById('resultDescription').textContent = data.description;
+
+            const grid = document.getElementById('resultsGrid');
+            grid.innerHTML = '';
+
+            // Add input image
+            const inputCard = createImageCard(data.input_url, 'Imagen Original', 'input');
+            grid.appendChild(inputCard);
+
+            // Add generated characters
+            data.characters.forEach((url, index) => {
+                if (url) {
+                    const card = createImageCard(url, `Personaje ${index + 1}`, 'character');
+                    grid.appendChild(card);
+                }
+            });
+
+            generateBtn.disabled = false;
+        }
+
+        function createImageCard(url, title, type) {
+            const card = document.createElement('div');
+            card.className = `result-card ${type}`;
+            card.innerHTML = `
+                <img src="${url}" alt="${title}">
+                <div class="card-overlay">
+                    <h4>${title}</h4>
+                    <a href="${url}" download class="download-btn">⬇️ Descargar</a>
+                </div>
+            `;
+            return card;
+        }
+    </script>
+</body>
+
+</html>

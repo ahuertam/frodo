@@ -46,6 +46,30 @@ python3 charactor.py
 
 ---
 
+### 🎭 [Charme](./Charme) - RPG Character Transformer
+Converts photos into epic RPG character classes.
+
+**What it does:**
+- Transforms photos of people or drawings into RPG characters
+- Supports 12 character classes (Warrior, Mage, Rogue, Cleric, etc.)
+- Generates 1-4 characters simultaneously
+- Web interface with drag-and-drop upload
+
+**Modes:**
+- 🔑 **Premium**: GPT-4 Vision analysis + DALL-E 3 generation (requires OpenAI API key)
+- 🆓 **Free**: BLIP captioning + Pollinations.ai (no API key needed)
+
+**Usage:**
+```bash
+cd Charme
+source venv/bin/activate
+pip install -r requirements.txt
+python app.py
+# Opens web interface at http://127.0.0.1:5001
+```
+
+---
+
 ### 📐 [Delineante](./Delineante) - Isometric Draftsman
 Converts photos into isometric technical drawings.
 

@@ -249,37 +249,75 @@ tabletop gaming battle map"""
 
 
 def analyze_image_free(image_path):
-    """Analiza imagen con BLIP (modo gratuito)"""
+    """Analiza imagen con múltiples modelos gratuitos para mejor descripción"""
+    captions = []
+    
+    # Intentar con BLIP
     try:
         if hf_client:
             caption = hf_client.image_to_text(image_path)
+            captions.append(caption)
             print(f"📝 BLIP Caption: {caption}")
-            return caption
     except Exception as e:
         print(f"⚠️ Error en BLIP: {e}")
+    
+    # Intentar con BLIP-2 (mejor modelo)
+    try:
+        blip2_client = InferenceClient(model="Salesforce/blip2-opt-2.7b")
+        caption2 = blip2_client.image_to_text(image_path)
+        captions.append(caption2)
+        print(f"📝 BLIP-2 Caption: {caption2}")
+    except Exception as e:
+        print(f"⚠️ Error en BLIP-2: {e}")
+    
+    # Combinar captions o usar el mejor
+    if captions:
+        # Usar el caption más largo (generalmente más descriptivo)
+        best_caption = max(captions, key=len)
+        return best_caption
     
     return "architectural structure"
 
 def generate_with_pollinations(caption):
-    """Genera imagen con Pollinations.ai (modo gratuito)"""
+    """Genera imagen con Pollinations.ai (modo gratuito) - Prompt mejorado"""
     try:
-        # Prompt mejorado para mejor calidad
-        final_prompt = f"""isometric technical drawing blueprint of {caption}, 
-hand drawn architectural sketch on graph paper, detailed line art, 
-white background, black ink lines, professional schematic, 
-30-degree isometric perspective, clean technical illustration"""
+        # Prompt MUCHO más detallado y específico
+        final_prompt = f"""Professional isometric architectural technical drawing of {caption}.
+
+STYLE: Hand-drawn blueprint, black ink on white paper, technical illustration
+PERSPECTIVE: 30-degree isometric axonometric projection, showing all three dimensions
+DETAILS: Clean precise lines, architectural accuracy, structural elements visible
+QUALITY: Professional drafting quality, detailed but not cluttered
+BACKGROUND: Pure white background, no grid
+TECHNIQUE: Technical pen drawing, architectural sketch style
+
+IMPORTANT: Maintain the architectural style and character of {caption}. 
+Show the complete structure in isometric view with accurate proportions."""
         
         # Encode prompt for URL
         encoded_prompt = requests.utils.quote(final_prompt)
         
-        # Generar con Pollinations
+        # Generar con Pollinations usando Flux (mejor modelo)
         import random
         seed = random.randint(0, 999999)
-        image_url = f"{POLLINATIONS_URL}{encoded_prompt}?width=1024&height=1024&seed={seed}&nologo=true&model=flux"
         
-        print(f"🎨 Generando con Pollinations...")
+        # Parámetros optimizados para mejor calidad
+        params = {
+            'width': 1024,
+            'height': 1024,
+            'seed': seed,
+            'nologo': 'true',
+            'model': 'flux',
+            'enhance': 'true'  # Mejora de calidad
+        }
         
-        response = requests.get(image_url, timeout=60)
+        param_string = '&'.join([f"{k}={v}" for k, v in params.items()])
+        image_url = f"{POLLINATIONS_URL}{encoded_prompt}?{param_string}"
+        
+        print(f"🎨 Generando con Pollinations (Flux enhanced)...")
+        print(f"📋 Prompt: {final_prompt[:100]}...")
+        
+        response = requests.get(image_url, timeout=90)  # Más tiempo para mejor calidad
         if response.status_code == 200:
             return response.content
         else:

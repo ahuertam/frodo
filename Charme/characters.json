@@ -1,0 +1,112 @@
+{
+    "classes": [
+        {
+            "id": "warrior",
+            "name": "Guerrero",
+            "description": "Maestro del combate cuerpo a cuerpo, armado con espada y escudo",
+            "keywords": "medieval knight, full plate armor, chainmail, metal gauntlets, sword and shield, battle-worn armor, heroic warrior pose",
+            "required_elements": "medieval armor, sword, shield, helmet or crown, cape",
+            "forbidden_elements": "modern clothing, suits, ties, glasses, watches, jeans, t-shirts, sneakers, contemporary accessories",
+            "art_style": "high fantasy character art, D&D style, Pathfinder aesthetic, medieval fantasy"
+        },
+        {
+            "id": "mage",
+            "name": "Mago",
+            "description": "Maestro de las artes arcanas, canalizador de energías místicas",
+            "keywords": "wizard robes, ornate staff, glowing magical runes, flowing robes, pointed hat or hood, mystical aura, arcane symbols",
+            "required_elements": "wizard robes, magical staff, spellbook, mystical effects, hood or wizard hat",
+            "forbidden_elements": "modern clothing, suits, ties, lab coats, glasses, contemporary items, casual wear",
+            "art_style": "fantasy wizard art, magical realism, D&D wizard aesthetic, mystical fantasy"
+        },
+        {
+            "id": "rogue",
+            "name": "Pícaro",
+            "description": "Experto en sigilo y combate furtivo, maestro de las sombras",
+            "keywords": "leather armor, dual daggers, hooded cloak, dark colors, stealthy pose, thief tools, agile stance",
+            "required_elements": "leather armor, hood or mask, daggers, dark cloak, belt with pouches",
+            "forbidden_elements": "modern clothing, suits, ties, sneakers, jeans, contemporary accessories, casual wear",
+            "art_style": "fantasy rogue art, assassin aesthetic, D&D rogue style, shadowy fantasy"
+        },
+        {
+            "id": "cleric",
+            "name": "Clérigo",
+            "description": "Sanador divino y guerrero de la fe",
+            "keywords": "holy robes, religious armor, divine symbol, mace or staff, healing light, blessed aura, prayer pose",
+            "required_elements": "religious robes or armor, holy symbol, divine weapon, sacred accessories",
+            "forbidden_elements": "modern clothing, suits, ties, contemporary religious attire, casual wear, modern accessories",
+            "art_style": "fantasy cleric art, divine warrior aesthetic, D&D cleric style, holy fantasy"
+        },
+        {
+            "id": "ranger",
+            "name": "Montaraz",
+            "description": "Cazador experto y guardián de la naturaleza",
+            "keywords": "leather armor, longbow and quiver, forest cloak, nature companion, hunting gear, wilderness attire, archer pose",
+            "required_elements": "bow and arrows, leather armor, forest cloak, nature-themed accessories, animal companion",
+            "forbidden_elements": "modern clothing, suits, ties, contemporary hunting gear, sneakers, casual wear",
+            "art_style": "fantasy ranger art, wilderness warrior aesthetic, D&D ranger style, nature fantasy"
+        },
+        {
+            "id": "paladin",
+            "name": "Paladín",
+            "description": "Caballero sagrado que combina fe y acero",
+            "keywords": "shining plate armor, holy sword, divine shield, radiant aura, blessed armor, righteous pose, sacred symbols",
+            "required_elements": "shining armor, holy weapon, divine symbols, radiant effects, cape or cloak",
+            "forbidden_elements": "modern clothing, suits, ties, contemporary items, casual wear, modern accessories",
+            "art_style": "fantasy paladin art, holy knight aesthetic, D&D paladin style, radiant fantasy"
+        },
+        {
+            "id": "barbarian",
+            "name": "Bárbaro",
+            "description": "Guerrero salvaje de fuerza descomunal",
+            "keywords": "tribal armor, massive battle axe, fur pelts, war paint, muscular build, fierce expression, primal rage pose",
+            "required_elements": "tribal armor, large weapon, fur clothing, war paint, primitive accessories",
+            "forbidden_elements": "modern clothing, suits, ties, contemporary items, refined armor, casual wear",
+            "art_style": "fantasy barbarian art, tribal warrior aesthetic, D&D barbarian style, primal fantasy"
+        },
+        {
+            "id": "bard",
+            "name": "Bardo",
+            "description": "Artista mágico que inspira con música y palabras",
+            "keywords": "colorful medieval clothes, lute or instrument, performer attire, charismatic pose, musical notes, entertainer garb",
+            "required_elements": "medieval instrument, colorful fantasy clothes, performer accessories, musical elements",
+            "forbidden_elements": "modern clothing, suits, ties, contemporary instruments, modern fashion, casual wear",
+            "art_style": "fantasy bard art, medieval performer aesthetic, D&D bard style, musical fantasy"
+        },
+        {
+            "id": "druid",
+            "name": "Druida",
+            "description": "Guardián de la naturaleza con poderes primordiales",
+            "keywords": "natural robes, wooden staff, animal companion, nature magic, leaf and vine motifs, earth tones, primal pose",
+            "required_elements": "nature-themed robes, wooden staff, natural accessories, animal companion, elemental effects",
+            "forbidden_elements": "modern clothing, suits, ties, contemporary items, refined clothing, casual wear",
+            "art_style": "fantasy druid art, nature guardian aesthetic, D&D druid style, elemental fantasy"
+        },
+        {
+            "id": "monk",
+            "name": "Monje",
+            "description": "Maestro de artes marciales y disciplina interior",
+            "keywords": "martial arts robes, staff or bare hands, meditation pose, inner energy aura, simple robes, disciplined stance",
+            "required_elements": "simple martial robes, staff or unarmed, energy effects, meditation elements",
+            "forbidden_elements": "modern clothing, suits, ties, contemporary martial arts gear, casual wear, modern accessories",
+            "art_style": "fantasy monk art, martial artist aesthetic, D&D monk style, mystical martial fantasy"
+        },
+        {
+            "id": "necromancer",
+            "name": "Nigromante",
+            "description": "Maestro de la magia oscura y los muertos vivientes",
+            "keywords": "dark robes, skull staff, undead minions, death magic aura, bone accessories, shadowy effects, sinister pose",
+            "required_elements": "dark robes, skull staff or bone accessories, death magic effects, shadowy aura",
+            "forbidden_elements": "modern clothing, suits, ties, contemporary items, bright colors, casual wear",
+            "art_style": "dark fantasy art, necromancer aesthetic, D&D necromancer style, gothic fantasy"
+        },
+        {
+            "id": "warlock",
+            "name": "Brujo",
+            "description": "Pactante con entidades de otros planos",
+            "keywords": "eldritch robes, pact weapon, otherworldly tattoos, dark magic aura, cursed accessories, mystical symbols, sinister pose",
+            "required_elements": "dark mystical robes, pact weapon, eldritch symbols, otherworldly effects",
+            "forbidden_elements": "modern clothing, suits, ties, contemporary items, casual wear, modern accessories",
+            "art_style": "dark fantasy art, warlock aesthetic, D&D warlock style, eldritch fantasy"
+        }
+    ]
+}
