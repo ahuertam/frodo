@@ -27,9 +27,16 @@ Delineante/
 ├── doc.md              # Documentación
 ├── templates/
 │   └── index.html      # Interfaz Web
-├── static/
-│   └── generated/      # Imágenes resultantes
-└── uploads/            # Imágenes subidas
+├── results/            # Resultados organizados por nombre de archivo
+│   ├── castle/
+│   │   ├── input.jpg
+│   │   ├── isometric.jpg
+│   │   ├── map_1.jpg
+│   │   ├── map_2.jpg
+│   │   └── ...
+│   └── house/
+│       └── ...
+└── uploads/            # Imágenes temporales
 ```
 
 ## Tecnología

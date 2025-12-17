@@ -14,10 +14,10 @@ app = Flask(__name__)
 # Configuración
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
-STATIC_GEN_FOLDER = os.path.join(BASE_DIR, 'static', 'generated')
+RESULTS_FOLDER = os.path.join(BASE_DIR, 'results')
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(STATIC_GEN_FOLDER, exist_ok=True)
+os.makedirs(RESULTS_FOLDER, exist_ok=True)
 
 # Detectar si tenemos OpenAI API Key
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
@@ -116,6 +116,138 @@ Quality: Clean, professional architectural sketch"""
         print(f"⚠️ Error en DALL-E 3: {e}")
         return None
 
+def identify_rooms_with_gpt4(description, count=4):
+    """Identifica habitaciones/áreas distintas para mapas top-down"""
+    try:
+        response = openai_client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {
+                    "role": "user",
+                    "content": f"""Based on this description: {description}
+
+Identify up to {count} distinct rooms or areas that would be interesting for a tabletop RPG session.
+For each room, provide a concise description (1-2 sentences) including:
+- Room name/type
+- Key features and layout
+- Tactical elements (furniture, obstacles, etc.)
+
+Format: Return only the room descriptions, one per line, numbered 1-{count}."""
+                }
+            ],
+            max_tokens=400
+        )
+        
+        rooms_text = response.choices[0].message.content
+        # Parse numbered list
+        rooms = []
+        for line in rooms_text.split('\n'):
+            line = line.strip()
+            if line and (line[0].isdigit() or line.startswith('-')):
+                # Remove numbering
+                room_desc = line.split('.', 1)[-1].strip() if '.' in line else line.lstrip('- ')
+                if room_desc:
+                    rooms.append(room_desc)
+        
+        # Limit to requested count
+        rooms = rooms[:count]
+        print(f"🏰 Identificadas {len(rooms)} habitaciones")
+        return rooms
+    
+    except Exception as e:
+        print(f"⚠️ Error identificando habitaciones: {e}")
+        # Fallback: generic rooms
+        generic_rooms = [
+            "Main hall with stone pillars and wooden furniture",
+            "Throne room with elevated platform and decorative elements",
+            "Dungeon chamber with cells and torture equipment",
+            "Tower room with spiral stairs and arrow slits"
+        ]
+        return generic_rooms[:count]
+
+def generate_topdown_map(room_description, model="dall-e-3"):
+    """Genera un mapa top-down de una habitación usando DALL-E 2 o 3"""
+    try:
+        prompt = f"""Top-down floor plan for tabletop RPG of: {room_description}
+
+Style: Clean architectural floor plan, black and white
+Features: 
+- Room layout with walls clearly defined
+- Furniture and obstacles marked
+- Doors and windows indicated
+- Clean, printable design
+- NO GRID (grid can be added later)
+- Suitable for D&D/Pathfinder
+Perspective: Bird's eye view, top-down, 2D floor plan"""
+        
+        print(f"🗺️ Generando mapa con {model.upper()}...")
+        
+        # DALL-E 2 uses different size options
+        size = "1024x1024" if model == "dall-e-3" else "1024x1024"
+        
+        response = openai_client.images.generate(
+            model=model,
+            prompt=prompt,
+            size=size,
+            n=1,
+        )
+        
+        image_url = response.data[0].url
+        
+        # Download image
+        img_response = requests.get(image_url)
+        if img_response.status_code == 200:
+            return img_response.content
+        else:
+            return None
+    
+    except Exception as e:
+        print(f"⚠️ Error generando mapa: {e}")
+        return None
+
+def generate_topdown_maps_free(caption, count=4):
+    """Genera mapas top-down con Pollinations (modo gratuito)"""
+    maps = []
+    
+    # Generic room types for fallback
+    room_types = [
+        "entrance hall",
+        "main chamber",
+        "side room",
+        "storage area"
+    ]
+    
+    for i in range(count):
+        try:
+            room_type = room_types[i] if i < len(room_types) else f"room {i+1}"
+            
+            final_prompt = f"""Top-down RPG floor plan, {caption} {room_type}, 
+architectural blueprint style, black and white,
+furniture layout, doors and walls clearly marked,
+bird's eye view, no grid overlay, clean printable map,
+tabletop gaming battle map"""
+            
+            encoded_prompt = requests.utils.quote(final_prompt)
+            
+            import random
+            seed = random.randint(0, 999999)
+            image_url = f"{POLLINATIONS_URL}{encoded_prompt}?width=1024&height=1024&seed={seed}&nologo=true&model=flux"
+            
+            print(f"🗺️ Generando mapa {i+1}/{count} con Pollinations...")
+            
+            response = requests.get(image_url, timeout=60)
+            if response.status_code == 200:
+                maps.append(response.content)
+            else:
+                maps.append(None)
+        
+        except Exception as e:
+            print(f"⚠️ Error generando mapa {i+1}: {e}")
+            maps.append(None)
+    
+    return maps
+
+
 def analyze_image_free(image_path):
     """Analiza imagen con BLIP (modo gratuito)"""
     try:
@@ -170,14 +302,35 @@ def generate():
     if file.filename == '':
         return jsonify({'error': 'Empty filename'}), 400
 
-    # Guardar imagen de entrada
-    filename = f"input_{int(time.time())}.jpg"
-    input_path = os.path.join(UPLOAD_FOLDER, filename)
+    # Get user preferences from form
+    generate_maps = request.form.get('generate_maps', 'false') == 'true'
+    map_count = int(request.form.get('map_count', 0))
+    use_dalle2 = request.form.get('use_dalle2', 'false') == 'true'
+    
+    print(f"📋 Opciones: Maps={generate_maps}, Count={map_count}, DALL-E2={use_dalle2}")
+
+    # Crear carpeta de resultados basada en el nombre del archivo
+    original_filename = os.path.splitext(file.filename)[0]  # Sin extensión
+    # Limpiar nombre para usar como carpeta
+    safe_folder_name = "".join(c for c in original_filename if c.isalnum() or c in (' ', '-', '_')).strip()
+    if not safe_folder_name:
+        safe_folder_name = f"upload_{int(time.time())}"
+    
+    result_folder = os.path.join(RESULTS_FOLDER, safe_folder_name)
+    os.makedirs(result_folder, exist_ok=True)
+    
+    print(f"📁 Guardando en: results/{safe_folder_name}/")
+
+    # Guardar imagen de entrada en la carpeta de resultados
+    input_filename = "input.jpg"
+    input_path = os.path.join(result_folder, input_filename)
     file.save(input_path)
 
     try:
         description = None
-        image_data = None
+        isometric_data = None
+        topdown_maps = []
+        room_descriptions = []
         
         # MODO PREMIUM: OpenAI
         if USE_OPENAI:
@@ -187,36 +340,66 @@ def generate():
             description = analyze_image_with_gpt4_vision(input_path)
             
             if description:
-                # 2. Generar con DALL-E 3
-                image_data = generate_with_dalle3(description)
+                # 2. Generar isométrico con DALL-E 3
+                isometric_data = generate_with_dalle3(description)
+                
+                # 3. Generar mapas top-down si está activado
+                if generate_maps and map_count > 0:
+                    rooms = identify_rooms_with_gpt4(description, count=map_count)
+                    room_descriptions = rooms
+                    model = "dall-e-2" if use_dalle2 else "dall-e-3"
+                    
+                    for room in rooms:
+                        map_data = generate_topdown_map(room, model=model)
+                        topdown_maps.append(map_data)
             
             # Fallback a modo gratuito si falla OpenAI
-            if not image_data:
+            if not isometric_data:
                 print("⚠️ OpenAI falló, usando modo gratuito...")
-                USE_OPENAI_TEMP = False
         
         # MODO GRATUITO: HuggingFace + Pollinations
-        if not USE_OPENAI or not image_data:
+        if not USE_OPENAI or not isometric_data:
             print("🆓 Usando pipeline GRATUITO...")
             
             # 1. Analizar con BLIP
             description = analyze_image_free(input_path)
             
-            # 2. Generar con Pollinations
-            image_data = generate_with_pollinations(description)
+            # 2. Generar isométrico con Pollinations
+            isometric_data = generate_with_pollinations(description)
+            
+            # 3. Generar mapas top-down si está activado
+            if generate_maps and map_count > 0:
+                topdown_maps = generate_topdown_maps_free(description, count=map_count)
+                room_descriptions = [f"Room {i+1}" for i in range(map_count)]
         
-        # Guardar resultado
-        if image_data:
-            output_filename = f"gen_{int(time.time())}.jpg"
-            final_path = os.path.join(STATIC_GEN_FOLDER, output_filename)
-            with open(final_path, 'wb') as f:
-                f.write(image_data)
+        # Guardar resultados en la carpeta organizada
+        if isometric_data:
+            # Guardar isométrico
+            iso_filename = "isometric.jpg"
+            iso_path = os.path.join(result_folder, iso_filename)
+            with open(iso_path, 'wb') as f:
+                f.write(isometric_data)
+            
+            # Guardar mapas top-down
+            map_urls = []
+            for i, map_data in enumerate(topdown_maps):
+                if map_data:
+                    map_filename = f"map_{i+1}.jpg"
+                    map_path = os.path.join(result_folder, map_filename)
+                    with open(map_path, 'wb') as f:
+                        f.write(map_data)
+                    map_urls.append(f"/results/{safe_folder_name}/{map_filename}")
+                else:
+                    map_urls.append(None)
             
             return jsonify({
-                'input_url': f"/uploads/{filename}",
-                'result_url': url_for('static', filename=f"generated/{output_filename}"),
+                'input_url': f"/results/{safe_folder_name}/{input_filename}",
+                'isometric_url': f"/results/{safe_folder_name}/{iso_filename}",
+                'topdown_maps': map_urls,
+                'room_descriptions': room_descriptions,
                 'description': description,
-                'mode': 'premium' if USE_OPENAI else 'free'
+                'mode': 'premium' if USE_OPENAI else 'free',
+                'folder': safe_folder_name
             })
         else:
             return jsonify({'error': 'Failed to generate image'}), 500
@@ -226,11 +409,12 @@ def generate():
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
-# Ruta para servir uploads
+# Ruta para servir archivos de resultados
 from flask import send_from_directory
-@app.route('/uploads/<path:filename>')
-def serve_uploads(filename):
-    return send_from_directory(UPLOAD_FOLDER, filename)
+@app.route('/results/<path:folder>/<path:filename>')
+def serve_results(folder, filename):
+    folder_path = os.path.join(RESULTS_FOLDER, folder)
+    return send_from_directory(folder_path, filename)
 
 if __name__ == '__main__':
     url = "http://127.0.0.1:5000"
