@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 venv/
 .env
-
+.env.local
 # Generated Content (Narrator/Salomon)
 *.mp3
 *.txt
