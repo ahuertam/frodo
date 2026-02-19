@@ -9,6 +9,7 @@ venv/
 *.mp3
 *.txt
 *.jpg
+/Charactor/*.md
 
 # Exceptions for Tests and Demos
 !*_Test*

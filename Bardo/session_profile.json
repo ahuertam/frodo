@@ -1,0 +1,28 @@
+{
+    "session_name": "Aventura en la Ci\u00e9naga",
+    "characters": [
+        {
+            "id": "arion",
+            "name": "Arion",
+            "class": "Guerrero",
+            "description": "Un guerrero alto y musculoso, con una armadura de placas reluciente y una gran espada a la espalda. Tiene el pelo negro y los ojos azules.",
+            "state": "Activo"
+        },
+        {
+            "id": "lyra",
+            "name": "Lyra",
+            "class": "Maga",
+            "description": "Una maga delgada y \u00e1gil, con una t\u00fanica azul y un bast\u00f3n de madera. Tiene el pelo rubio y los ojos verdes.",
+            "state": "Activo"
+        }
+    ],
+    "setting": {
+        "location": "Una oscura mazmorra",
+        "atmosphere": "H\u00fameda y l\u00fagubre, con olor a moho y a muerte.",
+        "time_of_day": "Noche"
+    },
+    "last_event": {
+        "timestamp": "2026-01-15T10:34:46Z",
+        "description": "Arion y Lyra continuan su camino, m\u00e1s alerta que antes."
+    }
+}

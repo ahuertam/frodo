@@ -46,6 +46,30 @@ python3 charactor.py
 
 ---
 
+### 📖 [Cronista](./Cronista) - Adventure Weaver
+Generates and expands role-playing game adventures.
+
+**What it does:**
+- Creates initial adventure plots from world and character descriptions
+- Iteratively expands the story based on user prompts
+- Manages multiple adventures through a web interface
+- Uses Google Gemini for AI-powered storytelling
+
+**Tech Stack:**
+- Text generation: Google Gemini API (free tier)
+- Web Interface: Flask
+
+**Usage:**
+```bash
+cd Cronista
+# Add GOOGLE_API_KEY to .env.local
+pip install -r requirements.txt
+python3 app.py
+# Opens web interface at http://127.0.0.1:5002
+```
+
+---
+
 ### 🎭 [Charme](./Charme) - RPG Character Transformer
 Converts photos into epic RPG character classes.
 

@@ -1,0 +1,247 @@
+{
+  "clases": [
+    {
+      "nombre": "Clérigo",
+      "raza": "Humano",
+      "requisitos": "SAB 10",
+      "caracteristica_principal": "Sabiduría (SAB)",
+      "dado_de_golpe": "1d6",
+      "nivel_maximo": "Ninguno",
+      "descripcion": "Humanos consagrados a servir fielmente a una deidad, defendiendo su doctrina. Usan conjuros divinos y armas contundentes.",
+      "habilidades": ["Conjuros divinos", "Expulsar muertos vivientes", "Uso de armas contundentes y todas las armaduras"],
+      "restricciones": "No pueden usar armas de filo (salvo regla opcional)."
+    },
+    {
+      "nombre": "Elfo",
+      "raza": "Elfo",
+      "requisitos": "INT 12, DES 13",
+      "caracteristica_principal": "Destreza e Inteligencia (DES y INT)",
+      "dado_de_golpe": "1d6",
+      "nivel_maximo": "10",
+      "descripcion": "Criaturas ligadas a la naturaleza, esbeltas y de innegable belleza. Combinan el uso de la magia con la habilidad marcial.",
+      "habilidades": ["Conjuros arcanos", "Infravisión (20m)", "Detectar puertas secretas", "Inmunidad a parálisis", "Uso de cualquier arma/armadura"],
+      "apariencia_tipica": "1.65m, 60kg, esbeltos."
+    },
+    {
+      "nombre": "Enano",
+      "raza": "Enano",
+      "requisitos": "CON 9",
+      "caracteristica_principal": "Fuerza (FUE)",
+      "dado_de_golpe": "1d8",
+      "nivel_maximo": "12",
+      "descripcion": "Individuos vigorosos, de constitución recia y cuerpo achaparrado. Viven bajo las montañas y tienen un fuerte sentido del honor.",
+      "habilidades": ["Infravisión (20m)", "Detectar trampas/construcciones", "Bonificador salvación vs magia", "Hablar con goblinoids"],
+      "apariencia_tipica": "1.40m, piel terrosa, barbas tupidas.",
+      "restricciones": "No usan armas grandes (dos manos) ni arcos largos."
+    },
+    {
+      "nombre": "Explorador",
+      "raza": "Humano",
+      "requisitos": "FUE 12, DES 9, SAB 12",
+      "caracteristica_principal": "Fuerza y Sabiduría (FUE y SAB)",
+      "dado_de_golpe": "1d8",
+      "nivel_maximo": "Ninguno",
+      "descripcion": "Especialistas en supervivencia y rastreo. Guardianes de los bosques y la naturaleza.",
+      "habilidades": ["Rastrear", "Bonificador vs goblinoides/gigantes", "Sorprender", "Animal de compañía (nivel 8)"],
+      "restricciones": "Cualquier arma. Armadura ligera preferida (no escudos)."
+    },
+    {
+      "nombre": "Guerrero",
+      "raza": "Humano",
+      "requisitos": "Ninguno",
+      "caracteristica_principal": "Fuerza (FUE)",
+      "dado_de_golpe": "1d8",
+      "nivel_maximo": "Ninguno",
+      "descripcion": "Luchadores experimentados consagrados al arte de la guerra.",
+      "habilidades": ["Uso de todas las armas y armaduras", "Ataques múltiples a niveles altos"]
+    },
+    {
+      "nombre": "Halfling (Mediano)",
+      "raza": "Halfling",
+      "requisitos": "DES 9, CON 9",
+      "caracteristica_principal": "Fuerza y Destreza (FUE y DES)",
+      "dado_de_golpe": "1d6",
+      "nivel_maximo": "8",
+      "descripcion": "Criaturas pequeñas, robustas y hogareñas, pero valientes y curiosas.",
+      "habilidades": ["Sigilo (esconderse/moverse)", "+1 ataque a distancia", "+2 CA vs criaturas grandes", "+1 iniciativa"],
+      "apariencia_tipica": "1m, 30kg, similares a humanos pequeños.",
+      "restricciones": "No armas grandes."
+    },
+    {
+      "nombre": "Ladrón",
+      "raza": "Humano",
+      "requisitos": "DES 10",
+      "caracteristica_principal": "Destreza (DES)",
+      "dado_de_golpe": "1d4",
+      "nivel_maximo": "Ninguno",
+      "descripcion": "Buscavidas hábiles y astutos, expertos en robar, ocultarse y sobrevivir en las ciudades.",
+      "habilidades": ["Abrir cerraduras", "Desactivar trampas", "Hurtar", "Sigilo", "Escalar", "Escuchar", "Apuñalar por la espalda", "Leer pergaminos (nivel 10)"],
+      "restricciones": "Armadura de cuero máximo, sin escudo."
+    },
+    {
+      "nombre": "Mago",
+      "raza": "Humano",
+      "requisitos": "INT 12",
+      "caracteristica_principal": "Inteligencia (INT)",
+      "dado_de_golpe": "1d4",
+      "nivel_maximo": "Ninguno",
+      "descripcion": "Estudiosos de las artes arcanas capaces de lanzar poderosos conjuros.",
+      "habilidades": ["Lanzamiento de conjuros arcanos"],
+      "restricciones": "Sin armadura. Armas limitadas (daga, bastón, etc.)."
+    },
+    {
+      "nombre": "Paladín",
+      "raza": "Humano",
+      "requisitos": "FUE 12, SAB 12, CAR 12",
+      "caracteristica_principal": "Fuerza y Carisma (FUE y CAR)",
+      "dado_de_golpe": "1d8",
+      "nivel_maximo": "Ninguno",
+      "descripcion": "Guerreros santos de fe inquebrantable, defensores del bien y la ley.",
+      "habilidades": ["Detectar el mal", "Imposición de manos (curar)", "Curar enfermedad", "Aura de protección", "Expulsar muertos vivientes (nivel 3)", "Conjuros clérigo (nivel 9)"],
+      "restricciones": "Código de conducta estricto (Legal)."
+    },
+    {
+      "nombre": "Asesino",
+      "raza": "Humano",
+      "requisitos": "FUE 12, DES 12, INT 12",
+      "caracteristica_principal": "Ninguna",
+      "dado_de_golpe": "1d4",
+      "nivel_maximo": "15",
+      "descripcion": "Maestros del disfraz, la infiltración y la muerte por encargo.",
+      "habilidades": ["Asesinato (muerte instantánea)", "Disfraz", "Uso de venenos", "Habilidades de ladrón"],
+      "restricciones": "Armadura de cuero, permite escudo."
+    },
+    {
+      "nombre": "Bárbaro",
+      "raza": "Humano",
+      "requisitos": "FUE 14, CON 14, DES 12",
+      "caracteristica_principal": "Fuerza (FUE)",
+      "dado_de_golpe": "1d8",
+      "nivel_maximo": "15",
+      "descripcion": "Guerreros salvajes de voluntad indómita, provenientes de tribus no civilizadas.",
+      "habilidades": ["Furia (bonos combate)", "Escalar", "Rastrear", "Moverse en silencio", "Velocidad"],
+      "restricciones": "Odian la magia. Armadura ligera/media."
+    },
+    {
+      "nombre": "Bardo",
+      "raza": "Humano",
+      "requisitos": "FUE 12, INT 12, CAR 15",
+      "caracteristica_principal": "Carisma (CAR)",
+      "dado_de_golpe": "1d6",
+      "nivel_maximo": "20",
+      "descripcion": "Artistas, narradores y viajeros que recopilan saber y leyendas.",
+      "habilidades": ["Conocimiento de bardo", "Encantar persona/monstruo", "Música", "Leer lenguajes/pergaminos"],
+      "restricciones": "Armadura hasta cota de escamas, sin escudo."
+    },
+    {
+      "nombre": "Druida",
+      "raza": "Humano",
+      "requisitos": "SAB 12, CAR 15",
+      "caracteristica_principal": "Sabiduría y Carisma (SAB y CAR)",
+      "dado_de_golpe": "1d6",
+      "nivel_maximo": "14",
+      "descripcion": "Sacerdotes de la naturaleza que velan por el equilibrio.",
+      "habilidades": ["Conjuros de druida", "Identificar plantas/animales", "Forma animal (nivel 7)", "Inmunidad encanto hadas"],
+      "restricciones": "Neutrales. Armadura de cuero (no metal). Escudos de madera. Armas curvas/contundentes."
+    },
+    {
+      "nombre": "Elfo Oscuro",
+      "raza": "Elfo Oscuro",
+      "requisitos": "Todos 10",
+      "caracteristica_principal": "FUE, DES, INT",
+      "dado_de_golpe": "1d6",
+      "nivel_maximo": "10",
+      "descripcion": "Habitantes del subterráneo, temidos y peligrosos.",
+      "habilidades": ["Infravisión (30m)", "Resistencia mágica", "Inmunidad veneno", "Sigilo", "Conjuros arcanos"],
+      "apariencia_tipica": "Piel gris/negra, pelo blanco, ojos claros/rojos. 1.50-1.70m."
+    },
+    {
+      "nombre": "Gnomo",
+      "raza": "Gnomo",
+      "requisitos": "CON 9, DES 9",
+      "caracteristica_principal": "Constitución (CON)",
+      "dado_de_golpe": "1d6",
+      "nivel_maximo": "10",
+      "descripcion": "Parientes lejanos de los enanos, amantes de artilugios y joyas.",
+      "habilidades": ["Infravisión (30m)", "Detectar profundidad/pendientes", "+2 CA vs grandes", "Hablar con animales de madriguera", "Ilusionista (opcional)"],
+      "apariencia_tipica": "1.20m."
+    },
+    {
+      "nombre": "Semielfo",
+      "raza": "Semielfo",
+      "requisitos": "DES 10, INT 10, CAR 10",
+      "caracteristica_principal": "Destreza y Carisma (DES y CAR)",
+      "dado_de_golpe": "1d6",
+      "nivel_maximo": "15",
+      "descripcion": "Híbridos de humano y elfo, raros y singulares.",
+      "habilidades": ["Infravisión (20m)", "Hechizar persona (habilidad)", "Sigilo", "Bonificador con arcos"],
+      "apariencia_tipica": "1.70m, rasgos mezclados."
+    },
+    {
+      "nombre": "Semiorco",
+      "raza": "Semiorco",
+      "requisitos": "FUE 12, CON 12",
+      "caracteristica_principal": "Fuerza y Constitución (FUE y CON)",
+      "dado_de_golpe": "1d8",
+      "nivel_maximo": "12",
+      "descripcion": "Híbridos de humano y orco, fuertes y a menudo rechazados.",
+      "habilidades": ["Infravisión (20m)", "Aura de temor (+1 ataque 1er asalto)", "Furia (nivel 5)"],
+      "apariencia_tipica": "2m, 90-120kg, rasgos toscos, piel tostada."
+    }
+  ],
+  "informacion_adicional": {
+    "personalidades": [
+      "Vehemente y defensor de la fe (Típico de Clérigos/Paladines)",
+      "Inquisitivo y altivo (Típico de Elfos)",
+      "Tosco, honorable y receloso (Típico de Enanos)",
+      "Solitario y conectado con la naturaleza (Típico de Exploradores/Druidas)",
+      "Disciplinado y marcial (Típico de Guerreros)",
+      "Apacible, hogareño y curioso (Típico de Halflings)",
+      "Astuto, pragmático y oportunista (Típico de Ladrones)",
+      "Estudioso, reservado y misterioso (Típico de Magos)",
+      "Furtivo y calculador (Típico de Asesinos)",
+      "Indómito, supersticioso y salvaje (Típico de Bárbaros)",
+      "Carismático, extrovertido y culto (Típico de Bardos)",
+      "Cruel y caótico (Típico de Elfos Oscuros)",
+      "Vivaz, ingenioso y amante de las joyas (Típico de Gnomos)",
+      "Adaptable y melancólico por su dualidad (Típico de Semielfos)",
+      "Brutal, directo y marginado (Típico de Semiorcos)"
+    ],
+    "apariencias": [
+      "Estatura media, complexión variada (Humano)",
+      "Esbelto, orejas puntiagudas, rasgos finos (Elfo)",
+      "Bajo, robusto, barbudo, piel terrosa (Enano)",
+      "Pequeño (1m), pies peludos, cara amable (Halfling)",
+      "Piel oscura/gris, pelo blanco, ojos extraños (Elfo Oscuro)",
+      "Muy bajo (1.20m), nariz prominente (Gnomo)",
+      "Rasgos humanos suavizados, orejas ligeramente puntiagudas (Semielfo)",
+      "Alto, musculoso, mandíbula prognata, piel grisácea/verdosa (Semiorco)"
+    ],
+    "psicologia": [
+      "Cree en el orden y la justicia por encima de todo.",
+      "Busca el equilibrio entre fuerzas opuestas.",
+      "Valora la libertad personal y el azar.",
+      "Desconfía de la magia y lo sobrenatural.",
+      "Codicia riquezas y poder material.",
+      "Protector de los débiles y necesitados.",
+      "Obsesionado con el conocimiento y los secretos.",
+      "Leal a su clan o familia ante todo.",
+      "Superviviente nato, el fin justifica los medios.",
+      "Conectado espiritualmente con la tierra y los seres vivos."
+    ],
+    "alineaciones": [
+      {
+        "nombre": "Legal",
+        "descripcion": "Creen en la ley, el orden, la verdad y la justicia. Buscan el bien común y siguen códigos estrictos."
+      },
+      {
+        "nombre": "Neutral",
+        "descripcion": "Buscan el equilibrio. Pueden cometer actos buenos o malos según la situación. 'El fin justifica los medios'."
+      },
+      {
+        "nombre": "Caótico",
+        "descripcion": "Egoístas, anteponen su interés propio. Valoran la libertad individual extrema o son activamente malvados/destructivos."
+      }
+    ]
+  }
+}

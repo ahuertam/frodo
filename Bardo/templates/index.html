@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería de Bardo</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f0f0f0; }
+        h1 { text-align: center; color: #333; }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            padding: 15px;
+        }
+        .gallery-item {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Galería de Imágenes de Bardo</h1>
+    <div class="gallery">
+        {% for image in images %}
+        <div class="gallery-item">
+            <img src="{{ url_for('static', filename='images/' + image) }}" alt="Imagen generada">
+        </div>
+        {% else %}
+        <p>No hay imágenes para mostrar.</p>
+        {% endfor %}
+    </div>
+</body>
+</html>

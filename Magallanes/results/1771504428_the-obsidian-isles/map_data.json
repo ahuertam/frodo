@@ -1,0 +1,99 @@
+{
+  "name": "The Obsidian Isles",
+  "description": "A volcanic archipelago, the Obsidian Isles are known for their treacherous landscapes and the hardy folk who eke out a living in the shadow of active volcanoes. The city of Pyrestone stands as a testament to their resilience.",
+  "locations": [
+    {
+      "name": "Pyrestone",
+      "type": "city",
+      "description": "A walled city built into the caldera of a dormant volcano on the largest island. Known for its obsidian mining and fiery forges.",
+      "connections": [
+        "Ashfall Village",
+        "Sulfur Springs",
+        "Jagged Coast"
+      ]
+    },
+    {
+      "name": "Ashfall Village",
+      "type": "village",
+      "description": "A small, hardy village constantly dusted with volcanic ash, dependent on fishing and hardy crops.",
+      "connections": [
+        "Pyrestone",
+        "Whispering Caves"
+      ]
+    },
+    {
+      "name": "Whispering Caves",
+      "type": "cave",
+      "description": "A network of lava tubes rumored to be haunted by the spirits of ancient fire mages.",
+      "connections": [
+        "Ashfall Village",
+        "Obsidian Peak"
+      ]
+    },
+    {
+      "name": "Obsidian Peak",
+      "type": "mountain",
+      "description": "The highest peak on the main island, a dormant volcano with a panoramic view of the archipelago.",
+      "connections": [
+        "Whispering Caves",
+        "Jagged Coast"
+      ]
+    },
+    {
+      "name": "Sulfur Springs",
+      "type": "lake",
+      "description": "Geothermal hot springs rich in sulfur, said to have healing properties, but reeking of brimstone.",
+      "connections": [
+        "Pyrestone",
+        "Scorched Lands"
+      ]
+    },
+    {
+      "name": "Jagged Coast",
+      "type": "port",
+      "description": "A treacherous coastline with sharp rocks and strong currents, the main landing point for ships.",
+      "connections": [
+        "Pyrestone",
+        "Obsidian Peak",
+        "Magmaflow Isle"
+      ]
+    },
+    {
+      "name": "Magmaflow Isle",
+      "type": "island",
+      "description": "The smallest of the three islands, constantly reshaped by active lava flows.",
+      "connections": [
+        "Jagged Coast",
+        "Dragon's Breath Vent"
+      ]
+    },
+    {
+      "name": "Dragon's Breath Vent",
+      "type": "cave",
+      "description": "An active volcanic vent on Magmaflow Isle, emitting noxious fumes and scorching heat.",
+      "connections": [
+        "Magmaflow Isle"
+      ]
+    },
+    {
+      "name": "Scorched Lands",
+      "type": "camp",
+      "description": "Barren lands, almost devoid of life due to volcanic activity and toxic gases.",
+      "connections": [
+        "Sulfur Springs",
+        "Basalt Cliffs"
+      ]
+    },
+    {
+      "name": "Basalt Cliffs",
+      "type": "mountain",
+      "description": "Towering cliffs of black basalt, facing the sea. A dangerous place to travel.",
+      "connections": [
+        "Scorched Lands"
+      ]
+    }
+  ],
+  "visual_prompt": "Fantasy parchment map of three volcanic islands. One island features a walled city inside a caldera. The islands are rugged, with visible volcanoes (one active), lava flows, black sand beaches, and jagged cliffs. Use a warm, aged color palette. Include subtle compass rose and minimal ornamental details. No legible text.",
+  "original_prompt": "Three volcanic islands with a walled city",
+  "style": "fantasy parchment"
+}

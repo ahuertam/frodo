@@ -1,0 +1,74 @@
+{
+  "name": "Bosque Susurrante de Wyrmdurmiente",
+  "description": "Un bosque antiguo y laberíntico, donde los árboles se retuercen como espectros. En su corazón, las ruinas de un imperio olvidado sirven como lecho de un dragón ancestral.",
+  "locations": [
+    {
+      "name": "Claro de la Luna Sangrante",
+      "type": "forest",
+      "description": "Un claro bañado por una luz rojiza incluso a plena luz del día, donde las hierbas se tiñen de carmesí.",
+      "connections": [
+        "Senda de las Lamentaciones",
+        "Ruinas de Wyrmdurmiente"
+      ]
+    },
+    {
+      "name": "Senda de las Lamentaciones",
+      "type": "forest",
+      "description": "Un sendero sinuoso y cubierto de maleza, marcado por los espíritus de viajeros perdidos.",
+      "connections": [
+        "Claro de la Luna Sangrante",
+        "Arroyo del Eco Silencioso",
+        "Borde del Bosque"
+      ]
+    },
+    {
+      "name": "Arroyo del Eco Silencioso",
+      "type": "river",
+      "description": "Un arroyo de aguas turbias que parece absorber el sonido, donde el silencio es casi palpable.",
+      "connections": [
+        "Senda de las Lamentaciones",
+        "Ciénaga de las Almas Perdidas"
+      ]
+    },
+    {
+      "name": "Ciénaga de las Almas Perdidas",
+      "type": "swamp",
+      "description": "Una ciénaga pantanosa llena de luces fatuas y rumores de almas atrapadas.",
+      "connections": [
+        "Arroyo del Eco Silencioso",
+        "Ruinas de Wyrmdurmiente"
+      ]
+    },
+    {
+      "name": "Ruinas de Wyrmdurmiente",
+      "type": "ruins",
+      "description": "Las ruinas derruidas de una antigua ciudad, ahora el dominio del dragón durmiente. Cargadas de magia ancestral y peligros olvidados.",
+      "connections": [
+        "Claro de la Luna Sangrante",
+        "Ciénaga de las Almas Perdidas",
+        "Pico del Cráneo"
+      ]
+    },
+    {
+      "name": "Pico del Cráneo",
+      "type": "mountain",
+      "description": "Una montaña escarpada con una cumbre que se asemeja a una calavera gigante, hogar de arpías y otras criaturas aladas.",
+      "connections": [
+        "Ruinas de Wyrmdurmiente",
+        "Borde del Bosque"
+      ]
+    },
+    {
+      "name": "Borde del Bosque",
+      "type": "forest",
+      "description": "La franja exterior del Bosque Susurrante, donde los árboles son más ralos y la luz del sol lucha por penetrar.",
+      "connections": [
+        "Senda de las Lamentaciones",
+        "Pico del Cráneo"
+      ]
+    }
+  ],
+  "visual_prompt": "Dark gothic fantasy map with detailed ink lines. Dense, gnarled forest surrounding crumbling ruins in the center. A skull-shaped mountain range borders one side. A murky swamp and a winding river snake through the woods. The layout should emphasize a sense of claustrophobia and dread.",
+  "original_prompt": "bosque perdido con unas ruinas centrales donde un dragón duerme",
+  "style": "dark gothic fantasy map with detailed ink lines"
+}

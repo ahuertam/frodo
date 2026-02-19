@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magallanes — Cartógrafo de Mundos</title>
+    <meta name="description" content="Genera mapas de fantasía para tus mundos de rol con IA">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <!-- Fondo animado de partículas -->
+    <div class="bg-particles" id="particles"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">🧭</span>
+                <h1>Magallanes</h1>
+            </div>
+            <p class="subtitle">Cartógrafo de Mundos Fantásticos</p>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="main">
+
+        <!-- Panel de generación -->
+        <section class="generator-panel" id="generatorPanel">
+            <div class="panel-header">
+                <h2><span class="icon">✦</span> Describe tu mundo</h2>
+                <p>Cuéntame cómo es el territorio y yo dibujaré el mapa.</p>
+            </div>
+
+            <div class="input-group">
+                <textarea id="promptInput"
+                    placeholder="Ej: Un archipiélago volcánico con tres islas principales conectadas por puentes de piedra antigua. La isla central tiene una ciudad amurallada, la del norte está cubierta de bosque encantado con ruinas élficas, y la del sur es un desierto de ceniza con una fortaleza enana subterránea..."
+                    rows="5"></textarea>
+                <div class="input-footer">
+                    <div class="style-selector">
+                        <label for="styleSelect">Estilo:</label>
+                        <select id="styleSelect">
+                            <option value="fantasy hand-drawn parchment ink illustration">📜 Pergamino clásico</option>
+                            <option value="watercolor fantasy map with soft colors">🎨 Acuarela</option>
+                            <option value="dark gothic fantasy map with detailed ink lines">🖤 Gótico oscuro</option>
+                            <option value="bright colorful fantasy map with vibrant colors">🌈 Fantasía colorida
+                            </option>
+                            <option value="old nautical chart with sea monsters and ships">⚓ Carta náutica</option>
+                            <option value="minimalist modern fantasy map clean lines">✨ Minimalista</option>
+                        </select>
+                    </div>
+                    <button class="btn-generate" id="btnGenerate" onclick="generateMap()">
+                        <span class="btn-text">🗺️ Generar Mapa</span>
+                        <span class="btn-loading" style="display:none">
+                            <span class="spinner"></span> Cartografiando...
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Estado de carga -->
+        <section class="loading-section" id="loadingSection" style="display:none">
+            <div class="loading-card">
+                <div class="loading-compass">
+                    <div class="compass-needle"></div>
+                </div>
+                <h3>Explorando territorios desconocidos...</h3>
+                <div class="loading-steps">
+                    <div class="step" id="step1">
+                        <span class="step-icon">🧠</span>
+                        <span class="step-text">Diseñando la estructura del mundo...</span>
+                    </div>
+                    <div class="step" id="step2">
+                        <span class="step-icon">🎨</span>
+                        <span class="step-text">Dibujando el mapa...</span>
+                    </div>
+                </div>
+                <p class="loading-tip">Esto puede tardar 30-60 segundos</p>
+            </div>
+        </section>
+
+        <!-- Resultado del mapa -->
+        <section class="result-section" id="resultSection" style="display:none">
+            <div class="result-card">
+                <div class="result-header">
+                    <h2 id="mapName"></h2>
+                    <p id="mapDescription" class="map-description"></p>
+                </div>
+
+                <div class="map-container">
+                    <img id="mapImage" src="" alt="Mapa generado" class="map-image">
+                    <div class="map-overlay">
+                        <button class="btn-fullscreen" onclick="toggleFullscreen()"
+                            title="Ver a pantalla completa">⛶</button>
+                    </div>
+                </div>
+
+                <div class="locations-panel" id="locationsPanel">
+                    <h3><span class="icon">📍</span> Localizaciones</h3>
+                    <div class="locations-grid" id="locationsGrid"></div>
+                </div>
+
+                <div class="result-actions">
+                    <button class="btn-secondary" onclick="scrollToGenerator()">🧭 Generar otro mapa</button>
+                    <a id="downloadLink" href="" download class="btn-secondary">💾 Descargar mapa</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Historial de mapas -->
+        {% if maps %}
+        <section class="history-section">
+            <h2><span class="icon">📚</span> Mapas anteriores</h2>
+            <div class="history-grid">
+                {% for map in maps %}
+                <div class="history-card" onclick="loadPreviousMap('{{ map.id }}')">
+                    <div class="history-image">
+                        <img src="/results/{{ map.id }}/map.jpg" alt="{{ map.name }}" loading="lazy">
+                    </div>
+                    <div class="history-info">
+                        <h4>{{ map.name }}</h4>
+                        <p>{{ map.description[:100] }}{% if map.description|length > 100 %}...{% endif %}</p>
+                        <span class="location-count">📍 {{ map.locations|length }} localizaciones</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+    </main>
+
+    <!-- Modal fullscreen -->
+    <div class="fullscreen-modal" id="fullscreenModal" onclick="toggleFullscreen()">
+        <img id="fullscreenImage" src="" alt="Mapa a pantalla completa">
+        <button class="btn-close-fullscreen">✕</button>
+    </div>
+
+    <script>
+        // Partículas de fondo
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (6 + Math.random() * 8) + 's';
+                particle.style.width = particle.style.height = (2 + Math.random() * 4) + 'px';
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // Generar mapa
+        async function generateMap() {
+            const prompt = document.getElementById('promptInput').value.trim();
+            const style = document.getElementById('styleSelect').value;
+
+            if (!prompt) {
+                document.getElementById('promptInput').focus();
+                document.getElementById('promptInput').classList.add('shake');
+                setTimeout(() => document.getElementById('promptInput').classList.remove('shake'), 500);
+                return;
+            }
+
+            // Mostrar loading
+            const btn = document.getElementById('btnGenerate');
+            btn.querySelector('.btn-text').style.display = 'none';
+            btn.querySelector('.btn-loading').style.display = 'inline-flex';
+            btn.disabled = true;
+
+            document.getElementById('loadingSection').style.display = 'block';
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('step1').classList.add('active');
+            document.getElementById('step2').classList.remove('active', 'done');
+
+            document.getElementById('loadingSection').scrollIntoView({ behavior: 'smooth' });
+
+            // Simular progreso del paso 1 después de 3s
+            setTimeout(() => {
+                document.getElementById('step1').classList.add('done');
+                document.getElementById('step2').classList.add('active');
+            }, 3000);
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt, style })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+
+                // Mostrar resultado
+                displayMap(data.map);
+
+            } catch (error) {
+                alert('Error de conexión: ' + error.message);
+            } finally {
+                // Reset botón
+                btn.querySelector('.btn-text').style.display = 'inline';
+                btn.querySelector('.btn-loading').style.display = 'none';
+                btn.disabled = false;
+                document.getElementById('loadingSection').style.display = 'none';
+            }
+        }
+
+        // Mostrar mapa en la interfaz
+        function displayMap(map) {
+            document.getElementById('mapName').textContent = map.name;
+            document.getElementById('mapDescription').textContent = map.description;
+            document.getElementById('mapImage').src = map.image_url;
+            document.getElementById('fullscreenImage').src = map.image_url;
+            document.getElementById('downloadLink').href = map.image_url;
+
+            // Localizaciones
+            const grid = document.getElementById('locationsGrid');
+            grid.innerHTML = '';
+
+            const typeIcons = {
+                'city': '🏰', 'town': '🏘️', 'village': '🛖', 'ruins': '🏚️',
+                'dungeon': '⚔️', 'forest': '🌲', 'mountain': '⛰️', 'lake': '🏞️',
+                'river': '🌊', 'port': '⚓', 'castle': '🏯', 'temple': '⛩️',
+                'cave': '🕳️', 'island': '🏝️', 'bridge': '🌉', 'tower': '🗼',
+                'camp': '⛺'
+            };
+
+            if (map.locations && map.locations.length > 0) {
+                map.locations.forEach(loc => {
+                    const card = document.createElement('div');
+                    card.className = 'location-card';
+                    const icon = typeIcons[loc.type] || '📍';
+                    const connections = loc.connections && loc.connections.length > 0
+                        ? `<div class="location-connections">→ ${loc.connections.join(', ')}</div>`
+                        : '';
+                    card.innerHTML = `
+                        <div class="location-header">
+                            <span class="location-icon">${icon}</span>
+                            <h4>${loc.name}</h4>
+                        </div>
+                        <span class="location-type">${loc.type}</span>
+                        <p>${loc.description}</p>
+                        ${connections}
+                    `;
+                    grid.appendChild(card);
+                });
+                document.getElementById('locationsPanel').style.display = 'block';
+            } else {
+                document.getElementById('locationsPanel').style.display = 'none';
+            }
+
+            document.getElementById('resultSection').style.display = 'block';
+            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Cargar mapa anterior
+        async function loadPreviousMap(mapId) {
+            try {
+                const response = await fetch(`/map/${mapId}`);
+                const data = await response.json();
+                if (data.map) {
+                    displayMap(data.map);
+                }
+            } catch (error) {
+                console.error('Error cargando mapa:', error);
+            }
+        }
+
+        // Fullscreen
+        function toggleFullscreen() {
+            const modal = document.getElementById('fullscreenModal');
+            modal.classList.toggle('active');
+            document.body.style.overflow = modal.classList.contains('active') ? 'hidden' : '';
+        }
+
+        // Scroll al generador
+        function scrollToGenerator() {
+            document.getElementById('generatorPanel').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('promptInput').focus();
+        }
+
+        // Enter para generar
+        document.getElementById('promptInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                generateMap();
+            }
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cronista - Gestor de Aventuras</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Cronista</h1>
+        <p>Tu asistente para crear y expandir tramas narrativas.</p>
+
+        <h2>Mis Aventuras</h2>
+        <ul class="adventure-list">
+            <!-- Las aventuras se listarán aquí dinámicamente -->
+        </ul>
+
+        <hr>
+
+        <h2>Crear Nueva Aventura</h2>
+        <form action="/create" method="post">
+            <input type="text" name="title" placeholder="Título de la Aventura" required>
+            <textarea name="world" rows="5" placeholder="Describe el mundo, sus ciudades, facciones, etc." required></textarea>
+            <textarea name="characters" rows="5" placeholder="Describe los personajes, sus metas y habilidades. Puedes pegar aquí la salida de Charactor." required></textarea>
+            <button type="submit" class="btn">Crear Aventura</button>
+        </form>
+    </div>
+</body>
+</html>

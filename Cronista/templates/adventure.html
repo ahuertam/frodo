@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Cronista</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <a href="/">&larr; Volver al inicio</a>
+        <h1>{{ title }}</h1>
+
+        <h2>Historia Hasta Ahora</h2>
+        <div class="story">
+            {{ story | safe }}
+        </div>
+
+        <hr>
+
+        <h2>¿Qué sucede a continuación?</h2>
+        <form action="/continue/{{ adventure_id }}" method="post">
+            <textarea name="prompt" rows="5" placeholder="Describe qué quieres que suceda a continuación. Por ejemplo: 'Los héroes deciden explorar la cueva del norte...' o 'Un misterioso extraño aparece en la taberna.'" required></textarea>
+            <button type="submit" class="btn">Generar Siguiente Capítulo</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+{
+  "name": "Isla de Fuego Eterno",
+  "description": "Una isla volcánica envuelta en cenizas perpetuas, donde el fuego y la piedra se entrelazan. En su centro se alza una fortaleza inexpugnable, guardiana de secretos ancestrales.",
+  "locations": [
+    {
+      "name": "Fortaleza de Obsidian",
+      "type": "castle",
+      "description": "Una imponente fortaleza construida con roca volcánica negra, inexpugnable y vigilante.",
+      "connections": [
+        "Puerto de Lava",
+        "Camino de Ceniza"
+      ]
+    },
+    {
+      "name": "Puerto de Lava",
+      "type": "port",
+      "description": "Un puerto natural formado por coladas de lava solidificada, el único punto de acceso seguro a la isla.",
+      "connections": [
+        "Fortaleza de Obsidian",
+        "Bocas del Volcán"
+      ]
+    },
+    {
+      "name": "Bocas del Volcán",
+      "type": "mountain",
+      "description": "Las fauces humeantes del volcán central, un lugar de poder y destrucción incontrolables.",
+      "connections": [
+        "Puerto de Lava",
+        "Camino de Ceniza",
+        "Grutas Sulfúricas"
+      ]
+    },
+    {
+      "name": "Camino de Ceniza",
+      "type": "camp",
+      "description": "Una senda peligrosa cubierta de ceniza volcánica, plagada de criaturas de fuego.",
+      "connections": [
+        "Fortaleza de Obsidian",
+        "Bocas del Volcán",
+        "Grutas Sulfúricas"
+      ]
+    },
+    {
+      "name": "Grutas Sulfúricas",
+      "type": "cave",
+      "description": "Cuevas subterráneas repletas de vapores tóxicos y extrañas formaciones cristalinas.",
+      "connections": [
+        "Bocas del Volcán",
+        "Camino de Ceniza"
+      ]
+    }
+  ],
+  "visual_prompt": "fantasy hand-drawn parchment ink illustration of a volcanic island. Black obsidian fortress on the central volcano. Lava flows reaching a port. Ash covered path connecting the fortress to the volcano and sulfur caves. Smoking volcano peak. Small boats in the lava port.",
+  "original_prompt": "isla volcanica con fortaleza",
+  "style": "fantasy hand-drawn parchment ink illustration"
+}
