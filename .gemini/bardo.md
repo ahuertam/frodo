@@ -7,12 +7,12 @@ Actúa como Dungeon Master para juegos de rol. Genera narrativa, reacciona a las
 
 | Archivo | Función |
 |---|---|
-| `bardo.py` | Clase `Bardo` con toda la lógica (GPT-4, Vosk, Deepgram) |
+| `bardo.py` | Clase `Bardo` con toda la lógica (GPT-4 + Vosk) |
 | `session_profile.json` | Config de aventura: personajes, escenario, tono |
-| `web_server.py` | Servidor Flask para interfaz web |
+| `web_server.py` | Servidor Flask para interfaz web (`:5004`) |
 | `narrador_sim.py` | Simulador de narrador |
 | `run_realtime.py` | Lanza modo escucha en tiempo real (Vosk) |
-| `README.md` | Doc del modo Deepgram en tiempo real |
+| `README.md` | Doc del modo de escucha en tiempo real (Vosk) |
 
 ## Carpetas
 
@@ -38,15 +38,13 @@ Métodos principales:
 ## APIs
 
 - **OpenAI GPT-4 Turbo** → Generación de texto narrativo (modelo `gpt-4-turbo`, max 150 tokens)
-- **Vosk** → STT offline en español
-- **Deepgram** → STT en tiempo real (alternativa online a Vosk)
-- **LiveKit** → Comunicación en tiempo real (keys en `.env.local` raíz)
+- **Vosk** → STT offline en español. Es lo único que hay: no hay integración con Deepgram ni con LiveKit.
 
 ## Dependencias
-`openai`, `python-dotenv`, `vosk`, `sounddevice`, `deepgram-sdk`
+`openai`, `python-dotenv`, `vosk`, `sounddevice`
 
 ## Notas para desarrollo
 
 - El modelo Vosk se descarga automáticamente la primera vez.
-- Las rutas hardcodeadas asumen ejecución desde la raíz del proyecto (`Bardo/model`, `Bardo/session_profile.json`).
+- Todas las rutas se resuelven desde `BASE_DIR` del propio módulo: `cd Bardo && python3 run_realtime.py` funciona desde cualquier sitio.
 - GPT-4 es de pago (usa `OPENAI_API_KEY` de `.env.local` raíz).

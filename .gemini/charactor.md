@@ -1,39 +1,26 @@
-# Charactor — Creador de personajes RPG 🎭
+# Charactor — Generador de nombres de fantasía 🏷️
 
 ## Qué hace
-Transforma una idea simple (ej: "Villano con miedo a las alturas") en una ficha completa de personaje con nombre, biografía, personalidad, descripción física y retrato visual generado por IA.
+Genera nombres de fantasía por raza a partir de tablas de sílabas, con el setting "La Marca del Este"
+como referencia de sonoridad. Siete razas: human, elf, dwarf, halfling, gnome, orc, drow.
+
+**Cero IA, cero red, cero API.** Es `random.choices` sobre tablas de prefijos, sufijos y sílabas
+intermedias. `generate_full_name()` añade un apellido o título según la raza.
+
+> La documentación anterior de este agente lo describía como un pipeline Gemini + Pollinations que
+> generaba fichas de personaje con retrato. **Ese código nunca existió.** No reintroducir esa descripción.
 
 ## Archivos clave
 
 | Archivo | Función |
 |---|---|
-| `marcaCharMaker.py` | Script principal (5KB). Genera personajes de La Marca del Este. |
-| `character_data.json` | Datos de clases/razas del sistema de juego (11KB) |
-| `context.txt` | Contexto del mundo de juego (700KB, muy largo) |
+| `marcaCharMaker.py` | Generador. Entry point: `python3 marcaCharMaker.py` |
+| `character_data.json` | Datos de clases/razas del sistema. **Ningún script lo lee** — referencia suelta |
 | `doc.md` | Documentación del agente |
-| `*.md` (varios) | Archivos de referencia del mundo: `bestiario.md`, `clases.md`, `combate.md`, `creacion_personajes.md`, `equipo.md`, `hechizos.md`, `objetos_magicos.md` |
 
-## Carpetas
-
-- `chars/` → Salida (subcarpeta por personaje con `perfil.md` + `retrato.jpg`)
-
-## Flujo
-
-1. `python3 marcaCharMaker.py`
-2. Introduces idea/arquetipo
-3. IA genera: Nombre, Biografía, Personalidad (miedos, deseos, virtudes), Descripción física
-4. Se guarda ficha en `chars/Nombre/perfil.md`
-5. La descripción física se envía a Pollinations → retrato en `chars/Nombre/retrato.jpg`
-
-## APIs
-
-- **Google Gemini** (gratuito, `GOOGLE_API_KEY`) → Generación de texto
-- **Pollinations.ai** (gratuito, sin key) → Generación de retratos
-- **Alternativa**: HuggingFace Inference (más lento)
-
-## Notas para desarrollo
-
-- Los `*.md` en la raíz de Charactor están en `.gitignore` (excepciones específicas).
-- `character_data.json` contiene datos mecánicos del sistema "La Marca del Este" (clases, razas, habilidades, conjuros por nivel).
-- `context.txt` es un volcado enorme del libro de reglas — se usa como contexto para el LLM.
-- Compatible con **Cronista**: los personajes generados se pueden usar como input para crear aventuras.
+## Notas
+- `character_data.json` está pendiente de borrar o de cablear; hoy es peso muerto.
+- La documentación anterior mencionaba `charactor.py`, `context.txt`, `bestiario.md`, `clases.md` y una
+  carpeta `chars/` de salida. **Nada de eso existe** — la carpeta se vació a medias y la documentación no
+  se actualizó hasta ahora.
+- Sin relación con IA: no confundir con `Cronista`, que sí usa Gemini.
