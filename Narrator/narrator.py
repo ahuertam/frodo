@@ -18,10 +18,9 @@ VOICES = {
     "6": {"name": "Inglés (USA) - Jenny (M)", "id": "en-US-JennyNeural"},
 }
 
-async def generate_audio(text, voice, output_path):
-    """Genera el audio usando edge-tts."""
-    communicate = edge_tts.Communicate(text, voice)
-    await communicate.save(output_path)
+def generate_audio(text, voice, output_path):
+    """Genera el audio usando edge-tts (su API es asíncrona; aquí no paralelizamos)."""
+    asyncio.run(edge_tts.Communicate(text, voice).save(output_path))
 
 def clean_text(text):
     """Limpieza básica del texto."""
@@ -47,7 +46,7 @@ def list_input_options():
     items.sort(key=lambda x: x["name"])
     return items
 
-async def main():
+def main():
     print("\n🎙️  AGENTE NARRADOR - STUDIO  🎙️")
     print("====================================")
     
@@ -57,9 +56,9 @@ async def main():
         print(f"❌ No hay archivos .txt ni carpetas en '{TEXTS_DIR}'.")
         return
 
-    print("\n� Biblioteca (Archivos y Carpetas):")
+    print("\n📚 Biblioteca (Archivos y Carpetas):")
     for idx, item in enumerate(options):
-        type_icon = "�" if item["type"] == "file" else "g"
+        type_icon = "📄" if item["type"] == "file" else "📁"
         extra_info = f"({item['count']} partes)" if item["type"] == "folder" else ""
         print(f"{idx + 1}. {type_icon} {item['name']} {extra_info}")
     
@@ -123,12 +122,12 @@ async def main():
             output_path = os.path.join(job_output_dir, f"{safe_name}.mp3")
             
             print(f"   ⏳ Generando audio ({len(final_text)} chars)...")
-            await generate_audio(final_text, selected_voice_id, output_path)
+            generate_audio(final_text, selected_voice_id, output_path)
             print(f"   ✅ Guardado: {os.path.basename(output_path)}")
             
         except Exception as e:
             print(f"   ❌ ERROR CRÍTICO en '{filename}': {e}")
-            print("� Deteniendo agente para evitar errores en cadena.")
+            print("⚠️  Deteniendo agente para evitar errores en cadena.")
             break
             
     print("\n✨ Proceso finalizado.")
@@ -140,6 +139,6 @@ async def main():
 
 if __name__ == "__main__":
     try:
-        asyncio.run(main())
+        main()
     except KeyboardInterrupt:
         print("\n👋 Agente detenido.")
