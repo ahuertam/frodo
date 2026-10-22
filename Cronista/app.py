@@ -2,26 +2,30 @@ from flask import Flask, render_template, request, redirect, url_for
 import os
 import json
 import re
-import google.genai as genai
 from dotenv import load_dotenv
 
-# Cargar variables de entorno
-load_dotenv(dotenv_path='.env.local')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env.local"))
+load_dotenv(dotenv_path=os.path.join(BASE_DIR, "..", ".env.local"))
 
 # Configurar Gemini
 try:
+    import google.genai as genai
     if os.getenv("GOOGLE_API_KEY"):
-        # La librería google.genai lee la variable de entorno GOOGLE_API_KEY automáticamente.
-        model = genai.GenerativeModel('gemini-pro')
+        client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
     else:
         print("⚠️  GOOGLE_API_KEY no encontrada. La generación de tramas estará desactivada.")
-        model = None
+        client = None
+except ImportError:
+    print("⚠️  google-genai no instalada. La generación de tramas estará desactivada.")
+    client = None
 except Exception as e:
     print(f"Error al inicializar el modelo de Gemini: {e}")
-    model = None
+    client = None
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
-ADVENTURES_DIR = 'Cronista/adventures'
+ADVENTURES_DIR = os.path.join(BASE_DIR, 'Cronista', 'adventures')
 
 if not os.path.exists(ADVENTURES_DIR):
     os.makedirs(ADVENTURES_DIR)
@@ -34,7 +38,7 @@ def slugify(text):
 
 def generate_initial_plot(title, world, characters):
     """Genera el Capítulo 1 de la aventura usando Google Gemini."""
-    if not model:
+    if not client:
         return f"# Capítulo 1\n\n*La aventura '{title}' comienza aquí...*\n\n**Mundo:** {world}\n\n**Personajes:** {characters}"
     
     prompt = f"""
@@ -75,7 +79,10 @@ Ahora, genera el Capítulo 1 único y emocionante para la aventura proporcionada
 """
     
     try:
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model='gemini-2.0-flash',
+            contents=prompt,
+        )
         return response.text
     except Exception as e:
         print(f"Error generando trama: {e}")
@@ -83,7 +90,7 @@ Ahora, genera el Capítulo 1 único y emocionante para la aventura proporcionada
 
 def generate_next_chapter(title, world, characters, story, user_prompt):
     """Genera el siguiente capítulo de la aventura usando Google Gemini."""
-    if not model:
+    if not client:
         return f"\n\n---\n\n*Continuación basada en la instrucción: '{user_prompt}'...*"
 
     # Contar cuántos capítulos hay para nombrar el siguiente
@@ -134,7 +141,10 @@ Ahora, genera el **Capítulo {next_chapter_number}** de forma única y emocionan
 """
     
     try:
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model='gemini-2.0-flash',
+            contents=prompt,
+        )
         return response.text
     except Exception as e:
         print(f"Error generando continuación de la trama: {e}")
