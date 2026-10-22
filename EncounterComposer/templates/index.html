@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encounter Composer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Encounter Composer</h1>
+            <p class="subtitle">Genera un encuentro jugable de 1 página para Al Filo del Imperio</p>
+        </header>
+
+        <main class="grid">
+            <section class="card">
+                <h2>Entrada</h2>
+
+                <div class="row two">
+                    <div>
+                        <label for="kind">Tipo</label>
+                        <select id="kind">
+                            <option value="escena">Escena</option>
+                            <option value="interludio">Interludio (entre localizaciones)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="location">Localización (opcional)</label>
+                        <select id="location">
+                            <option value="">Auto</option>
+                            {% for l in locations %}
+                            <option value="{{ l }}">{{ l }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="scene">Escena (Largo Brazo del Hutt)</label>
+                    <select id="scene">
+                        <option value="">Aleatoria / libre</option>
+                        {% for s in scenes_long_arm %}
+                        <option value="{{ s }}">{{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div id="interludeFields" class="card-inset" style="display: none;">
+                    <div class="row two">
+                        <div>
+                            <label for="from_location">Desde</label>
+                            <select id="from_location">
+                                <option value="">(elige)</option>
+                                {% for l in locations %}
+                                <option value="{{ l }}">{{ l }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label for="to_location">Hacia</label>
+                            <select id="to_location">
+                                <option value="">(elige)</option>
+                                {% for l in locations %}
+                                <option value="{{ l }}">{{ l }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row two">
+                    <div>
+                        <label for="seed">Semilla</label>
+                        <input id="seed" type="text" placeholder="Opcional (ej: hut-01)">
+                    </div>
+                    <div>
+                        <label for="party">Grupo</label>
+                        <select id="party">
+                            <option>4-5 medio</option>
+                            <option>3-4 novatos</option>
+                            <option>6+ o veteranos</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="keywords">Keywords (separadas por comas)</label>
+                    <input id="keywords" type="text" placeholder="Ej: deuda, humo, puertos, traición">
+                </div>
+
+                <details class="details">
+                    <summary>Modo guiado (opcional)</summary>
+
+                    <div class="row">
+                        <label for="title">Título</label>
+                        <input id="title" type="text" placeholder="Ej: La Compuerta 12">
+                    </div>
+
+                    <div class="row">
+                        <label for="hook">Gancho</label>
+                        <textarea id="hook" rows="2" placeholder="Qué pasa y por qué importa ahora"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <label for="objective">Objetivo</label>
+                        <textarea id="objective" rows="2" placeholder="Ganar no siempre = matar"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <label for="opposition">Oposición (1 por línea)</label>
+                        <textarea id="opposition" rows="2" placeholder="Un rival con nombre&#10;Dos grupos de esbirros"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <label for="terrain">Terreno (hasta 5 líneas)</label>
+                        <textarea id="terrain" rows="3" placeholder="Cobertura dura...&#10;Altura...&#10;Riesgo...&#10;Botón interactivo...&#10;Ruta secundaria..."></textarea>
+                    </div>
+
+                    <div class="row">
+                        <label for="pressure">Presión</label>
+                        <textarea id="pressure" rows="2" placeholder="Cronómetro / alerta / refuerzos"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <label for="twist">Giro</label>
+                        <textarea id="twist" rows="2" placeholder="Terceros, cambio de terreno, oferta, traición"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <label for="rewards">Recompensas / Consecuencias</label>
+                        <textarea id="rewards" rows="2" placeholder="Qué ganan si triunfan y qué pasa si fallan"></textarea>
+                    </div>
+                </details>
+
+                <div class="actions">
+                    <button id="generateBtn" class="primary">Generar</button>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>Salida</h2>
+                <div class="export-row">
+                    <button id="downloadFoundry" class="secondary" disabled>Descargar Foundry JSON</button>
+                    <button id="downloadRoll20" class="secondary" disabled>Descargar Roll20 TXT</button>
+                </div>
+                <pre id="output" class="output">Pulsa “Generar” para obtener un encuentro.</pre>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const output = document.getElementById('output');
+        const generateBtn = document.getElementById('generateBtn');
+        const downloadFoundry = document.getElementById('downloadFoundry');
+        const downloadRoll20 = document.getElementById('downloadRoll20');
+
+        let lastExports = null;
+        let lastTitle = 'encuentro';
+
+        function readValue(id) {
+            return document.getElementById(id).value || '';
+        }
+
+        function slugify(text) {
+            return (text || 'encuentro')
+                .toString()
+                .trim()
+                .toLowerCase()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/[\s_-]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+
+        function downloadText(filename, content, mime) {
+            const blob = new Blob([content], { type: mime });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        generateBtn.addEventListener('click', async () => {
+            downloadFoundry.disabled = true;
+            downloadRoll20.disabled = true;
+            lastExports = null;
+            output.textContent = 'Generando...';
+
+            const payload = {
+                system: 'Star Wars: Al Filo del Imperio',
+                module: 'El Largo Brazo del Hutt',
+                kind: readValue('kind'),
+                scene: readValue('scene'),
+                mode: 'mixto',
+                seed: readValue('seed'),
+                party: readValue('party'),
+                emphasis: 'variedad',
+                keywords: readValue('keywords'),
+                location: readValue('location'),
+                from_location: readValue('from_location'),
+                to_location: readValue('to_location'),
+                title: readValue('title'),
+                hook: readValue('hook'),
+                objective: readValue('objective'),
+                opposition: readValue('opposition'),
+                pressure: readValue('pressure'),
+                twist: readValue('twist'),
+                terrain: readValue('terrain'),
+                rewards: readValue('rewards'),
+            };
+
+            try {
+                const res = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) {
+                    throw new Error('No se pudo generar el encuentro');
+                }
+
+                const data = await res.json();
+                output.textContent = data.markdown;
+                lastExports = data.exports;
+                lastTitle = data.encounter?.title || 'encuentro';
+                downloadFoundry.disabled = false;
+                downloadRoll20.disabled = false;
+            } catch (e) {
+                output.textContent = 'Error: ' + e.message;
+            }
+        });
+
+        function syncUI() {
+            const kind = readValue('kind');
+            const isInterlude = kind === 'interludio';
+            document.getElementById('interludeFields').style.display = isInterlude ? 'block' : 'none';
+            document.getElementById('scene').disabled = isInterlude;
+        }
+
+        document.getElementById('kind').addEventListener('change', syncUI);
+        syncUI();
+
+        downloadFoundry.addEventListener('click', () => {
+            if (!lastExports?.foundry) return;
+            const name = slugify(lastTitle);
+            downloadText(`${name}.foundry-journal.json`, JSON.stringify(lastExports.foundry, null, 2), 'application/json');
+        });
+
+        downloadRoll20.addEventListener('click', () => {
+            if (!lastExports?.roll20) return;
+            const name = slugify(lastTitle);
+            downloadText(`${name}.roll20.txt`, lastExports.roll20, 'text/plain');
+        });
+    </script>
+</body>
+
+</html>
