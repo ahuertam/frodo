@@ -383,4 +383,4 @@ if __name__ == '__main__':
     
     import webbrowser
     webbrowser.open(url)
-    app.run(debug=True, port=5001)
+    app.run(debug=os.environ.get("FLASK_DEBUG") == "1", port=5001)

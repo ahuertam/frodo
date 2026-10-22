@@ -1,9 +1,13 @@
 import os
 import time
 import base64
-from flask import Flask, render_template, request, url_for, jsonify
-from PIL import Image
+import random
 import traceback
+import webbrowser
+import requests
+from flask import Flask, render_template, request, url_for, jsonify, send_from_directory
+from PIL import Image
+from huggingface_hub import InferenceClient
 from dotenv import load_dotenv
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -35,13 +39,10 @@ CAPTION_MODEL = "Salesforce/blip-image-captioning-large"
 POLLINATIONS_URL = "https://image.pollinations.ai/prompt/"
 
 # Cliente de HuggingFace para captioning (modo gratuito)
-from huggingface_hub import InferenceClient
 try:
     hf_client = InferenceClient(model=CAPTION_MODEL)
 except:
     hf_client = None
-
-import requests
 
 def analyze_image_with_gpt4_vision(image_path):
     """Analiza la imagen con GPT-4 Vision para obtener descripción detallada"""
@@ -227,8 +228,7 @@ bird's eye view, no grid overlay, clean printable map,
 tabletop gaming battle map"""
             
             encoded_prompt = requests.utils.quote(final_prompt)
-            
-            import random
+
             seed = random.randint(0, 999999)
             image_url = f"{POLLINATIONS_URL}{encoded_prompt}?width=1024&height=1024&seed={seed}&nologo=true&model=flux"
             
@@ -297,7 +297,6 @@ Show the complete structure in isometric view with accurate proportions."""
         encoded_prompt = requests.utils.quote(final_prompt)
         
         # Generar con Pollinations usando Flux (mejor modelo)
-        import random
         seed = random.randint(0, 999999)
         
         # Parámetros optimizados para mejor calidad
@@ -447,7 +446,6 @@ def generate():
         return jsonify({'error': str(e)}), 500
 
 # Ruta para servir archivos de resultados
-from flask import send_from_directory
 @app.route('/results/<path:folder>/<path:filename>')
 def serve_results(folder, filename):
     folder_path = os.path.join(RESULTS_FOLDER, folder)
@@ -457,7 +455,6 @@ if __name__ == '__main__':
     url = "http://127.0.0.1:5000"
     print(f"🚀 Delineante corriendo en {url}")
     print(f"📊 Modo: {'PREMIUM (OpenAI)' if USE_OPENAI else 'GRATUITO (Pollinations)'}")
-    
-    import webbrowser
+
     webbrowser.open(url)
-    app.run(debug=True, port=5000)
+    app.run(debug=os.environ.get("FLASK_DEBUG") == "1", port=5000)
