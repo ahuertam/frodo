@@ -10,8 +10,8 @@ El proyecto se estructura de la siguiente manera:
   - `bardo.py`: Contiene la lógica principal del agente, incluyendo la inicialización del modelo de lenguaje, el manejo de la conversación y la interacción con el usuario.
   - `session_profile.json`: Archivo de configuración que define los personajes, el escenario y el tono de la aventura.
   - `static/`: Carpeta que contiene los archivos estáticos, como las imágenes generadas.
-- `app.py`: Aplicación Flask que sirve la interfaz de usuario.
-- `run.py`: Script para iniciar la aventura en modo de texto.
+- `Bardo/web_server.py`: Aplicación Flask que sirve la interfaz de usuario.
+- `Bardo/bardo.py`: Script/clase principal (incluye modo texto y modo voz).
 
 ## Personalización de la Aventura
 
@@ -66,6 +66,7 @@ pip install vosk sounddevice
 Una vez instaladas las dependencias, puedes iniciar el modo de escucha en tiempo real ejecutando el siguiente comando:
 
 ```bash
+cd Bardo
 python3 run_realtime.py
 ```
 

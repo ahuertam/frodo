@@ -41,7 +41,7 @@ Generates deep character profiles with visual portraits.
 **Usage:**
 ```bash
 cd Charactor
-python3 charactor.py
+python3 marcaCharMaker.py
 ```
 
 ---
@@ -133,7 +133,7 @@ Converts text into narrated audiobooks with neural voices.
 **Usage:**
 ```bash
 cd Narrator
-./venv/bin/python3 narrator.py
+python3 narrator.py
 ```
 
 ---
@@ -175,7 +175,7 @@ Automates deal hunting on Vinted and Wallapop.
 **Usage:**
 ```bash
 cd Sniper
-./venv/bin/python3 sniper.py
+python3 sniper.py
 # Opens results.html in browser
 ```
 

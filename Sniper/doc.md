@@ -11,7 +11,7 @@ El proyecto usa un entorno virtual para evitar conflictos con macOS.
 1.  **Ejecutar el Agente:**
     Desde la terminal en la carpeta `Sniper`:
     ```bash
-    ./venv/bin/python3 sniper.py
+    python3 sniper.py
     ```
 2.  **Seguir las instrucciones en pantalla:**
     - Escribe qué quieres buscar (ej. "Zelda 3DS").

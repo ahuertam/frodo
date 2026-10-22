@@ -48,7 +48,7 @@ Esto iniciará un servidor web local. Por defecto, podrás acceder a la aplicaci
 
 ## Estructura de Archivos
 
-Cada vez que creas una aventura, se genera una nueva carpeta dentro de `Cronista/adventures/`. El nombre de la carpeta es una versión "slug" del título de la aventura.
+Cada vez que creas una aventura, se genera una nueva carpeta dentro de `Cronista/Cronista/adventures/`. El nombre de la carpeta es una versión "slug" del título de la aventura.
 
 Dentro de cada carpeta de aventura, encontrarás:
 

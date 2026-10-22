@@ -21,7 +21,7 @@ Transformar textos (libros de dominio público, artículos, fanfics) en archivos
 
 ## 🚀 Flujo de Trabajo
 1.  **Preparación:** Copias un libro (ej. `dracula.txt`) a la carpeta `texts/`.
-2.  **Ejecución:** Lanzas `./venv/bin/python3 narrator.py`.
+2.  **Ejecución:** Lanzas `python3 narrator.py` (o `./venv/bin/python3 narrator.py` si usas venv).
 3.  **Selección:** El agente detecta los archivos en `texts/` y te pregunta cuál procesar.
 4.  **Configuración:** Eliges la voz (Español Neutro, Castellano, Inglés, etc.) y la velocidad.
 5.  **Generación:** El agente lee el texto y genera el audio en `generatedAuds/`.
