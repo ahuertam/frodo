@@ -7,13 +7,12 @@ from PIL import Image
 import traceback
 from dotenv import load_dotenv
 
-# Cargar variables de entorno desde .env.local
-load_dotenv('.env.local')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+load_dotenv(os.path.join(BASE_DIR, ".env.local"))
+load_dotenv(os.path.join(BASE_DIR, "..", ".env.local"))
 
 app = Flask(__name__)
 
-# Configuración
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
 RESULTS_FOLDER = os.path.join(BASE_DIR, 'results')
 CHARACTERS_FILE = os.path.join(BASE_DIR, 'characters.json')

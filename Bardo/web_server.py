@@ -4,11 +4,12 @@ from bardo import Bardo
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 bardo = Bardo()
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 @app.route('/')
 def index():
     images = []
-    images_dir = "Bardo/static/images"
+    images_dir = os.path.join(BASE_DIR, "static", "images")
     if os.path.exists(images_dir):
         images = [f for f in os.listdir(images_dir) if f.endswith(('.png', '.jpg', '.jpeg'))]
         images.sort(reverse=True)

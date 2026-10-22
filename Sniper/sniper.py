@@ -1,11 +1,15 @@
 import time
 import random
+import os
 import logging
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+RESULTS_PATH = os.path.join(BASE_DIR, "results.html")
 
 # Configuración de Logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -97,7 +101,7 @@ def generate_html(items, status_message="Esperando..."):
     """
     
     try:
-        with open("results.html", "w", encoding="utf-8") as f:
+        with open(RESULTS_PATH, "w", encoding="utf-8") as f:
             f.write(html_content)
         # print("✨ HTML actualizado: results.html") # No es necesario spammear la consola
     except Exception as e:
@@ -339,7 +343,7 @@ def main():
         print(f"🎯 Objetivo fijado: Vinted -> {query}")
 
     # Auto-abrir HTML al inicio
-    results_path = os.path.abspath("results.html")
+    results_path = RESULTS_PATH
     if not os.path.exists(results_path):
         # Crear un dummy inicial si no existe
         generate_html([], status_message="Iniciando agente...")

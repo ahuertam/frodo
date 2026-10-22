@@ -1,4 +1,4 @@
-from Bardo.bardo import Bardo
+from bardo import Bardo
 
 def main():
     bardo = Bardo()

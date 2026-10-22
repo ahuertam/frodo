@@ -10,13 +10,16 @@ import vosk
 import zipfile
 import urllib.request
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 class Bardo:
     def __init__(self):
-        load_dotenv(dotenv_path='.env.local')
+        load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env.local"))
+        load_dotenv(dotenv_path=os.path.join(BASE_DIR, "..", ".env.local"))
         self.client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         self.session_profile = self.load_session_profile()
         self.action_keywords = ["ataca", "lanza", "entra", "descubre", "muere", "huye"]
-        self.model_dir = "Bardo/model"
+        self.model_dir = os.path.join(BASE_DIR, "model")
         self.model_url = "https://alphacephei.com/vosk/models/vosk-model-small-es-0.42.zip"
 
     def check_model(self):
@@ -25,22 +28,22 @@ class Bardo:
             print(f"⬇️  Descargando modelo de voz (esto puede tardar un poco)...")
             print(f"    URL: {self.model_url}")
             
-            zip_path = os.path.join("Bardo", "model.zip")
+            zip_path = os.path.join(BASE_DIR, "model.zip")
             urllib.request.urlretrieve(self.model_url, zip_path)
             
             print("📦 Extrayendo modelo...")
             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                zip_ref.extractall("Bardo")
+                zip_ref.extractall(BASE_DIR)
             
             extracted_folder = "vosk-model-small-es-0.42"
-            os.rename(os.path.join("Bardo", extracted_folder), self.model_dir)
+            os.rename(os.path.join(BASE_DIR, extracted_folder), self.model_dir)
             os.remove(zip_path)
             print("✅ Modelo instalado.")
         else:
             print("✅ Modelo de voz detectado.")
 
     def load_session_profile(self):
-        with open('Bardo/session_profile.json', 'r') as f:
+        with open(os.path.join(BASE_DIR, 'session_profile.json'), 'r') as f:
             return json.load(f)
 
     def get_characters_string(self):
