@@ -207,4 +207,8 @@ lives in a plain Python module that can be imported and tested without a request
 
 ## 📄 License
 
-Open source — use responsibly and respect the terms of service of any API you call.
+MIT — see [`LICENSE`](LICENSE).
+
+The agents call third-party APIs (Pollinations.ai, Google Gemini, Microsoft Edge TTS,
+OpenAI, HuggingFace). This license covers **the code in this repository only**: use it
+responsibly and respect the terms of service of whichever API you call.
